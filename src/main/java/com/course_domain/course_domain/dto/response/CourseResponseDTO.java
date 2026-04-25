@@ -10,11 +10,27 @@ import java.time.Instant;
 @NoArgsConstructor
 @Data
 public class CourseResponseDTO {
-    private Long courseId;
+    private Integer id;
+
+    private String code;
 
     private String title;
 
+    private String slug;
+
     private String description;
 
+    private String instructorId;
+
+    private String level;
+
+    private String languageCode;
+
+    private String thumbnailUrl;
+
+    private Integer durationHours;
+
     private Instant createdAt;
+
+    private Instant updatedAt;
 }

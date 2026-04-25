@@ -2,31 +2,62 @@ package com.course_domain.course_domain.service.impl;
 
 import com.course_domain.course_domain.dto.request.CourseRequestDTO;
 import com.course_domain.course_domain.dto.response.CourseResponseDTO;
+import com.course_domain.course_domain.exception.DuplicateCourseFieldException;
+import com.course_domain.course_domain.mapper.CourseConverter;
+import com.course_domain.course_domain.mapper.CourseMapper;
 import com.course_domain.course_domain.model.Course;
 import com.course_domain.course_domain.repository.CourseRepository;
 import com.course_domain.course_domain.service.CourseService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Locale;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
+    private final CourseConverter courseConverter;
 
+    @Override
     public CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO) {
-        Course course = new Course();
-        course.setTitle(courseRequestDTO.getTitle());
-        course.setDescription(courseRequestDTO.getDescription());
+        validateUniqueCourseFields(courseRequestDTO);
 
-        Course savedCourse = courseRepository.save(course);
+        Course course = courseConverter.toEntity(courseRequestDTO);
+        Instant now = Instant.now();
+        course.setSlug(toSlug(courseRequestDTO.getTitle()));
+        course.setCreatedAt(now);
+        course.setUpdatedAt(now);
 
-        return new CourseResponseDTO(
-                savedCourse.getId(),
-                savedCourse.getTitle(),
-                savedCourse.getDescription(),
-                savedCourse.getCreatedAt()
-        );
+        Course savedCourse = courseRepository.saveAndFlush(course);
+        return courseMapper.toResponseDTO(savedCourse);
     }
 
+    private void validateUniqueCourseFields(CourseRequestDTO courseRequestDTO) {
+        if (courseRepository.existsByCodeIgnoreCase(courseRequestDTO.getCode())) {
+            log.warn("Course code already exists: {}", courseRequestDTO.getCode());
+            throw new DuplicateCourseFieldException("code", courseRequestDTO.getCode());
+        }
+
+        if (courseRepository.existsByInstructorIdIgnoreCase(courseRequestDTO.getInstructorId())) {
+            log.warn("Course instructorId already exists: {}", courseRequestDTO.getInstructorId());
+            throw new DuplicateCourseFieldException("instructorId", courseRequestDTO.getInstructorId());
+        }
+
+        if (courseRepository.existsByTitleIgnoreCase(courseRequestDTO.getTitle())) {
+            log.warn("Course title already exists: {}", courseRequestDTO.getTitle());
+            throw new DuplicateCourseFieldException("title", courseRequestDTO.getTitle());
+        }
+    }
+
+    private String toSlug(String value) {
+        return value.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("(^-|-$)", "");
+    }
 }
