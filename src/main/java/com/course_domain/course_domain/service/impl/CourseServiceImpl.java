@@ -34,7 +34,7 @@ public class CourseServiceImpl implements CourseService {
         course.setCreatedAt(now);
         course.setUpdatedAt(now);
 
-        Course savedCourse = courseRepository.saveAndFlush(course);
+        Course savedCourse = courseRepository.save(course);
         return courseMapper.toResponseDTO(savedCourse);
     }
 

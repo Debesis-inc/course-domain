@@ -10,7 +10,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Data
 public class CourseResponseDTO {
-    private Integer id;
+    private String id;
 
     private String code;
 
