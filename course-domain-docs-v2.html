@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Domain — Full Stack Documentation v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --surface3: #222222;
+  --border: #2a2a2a;
+  --border2: #333333;
+  --gold: #f0a500;
+  --gold2: #ffc840;
+  --gold-dim: rgba(240,165,0,.15);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,.12);
+  --blue: #38bdf8;
+  --blue-dim: rgba(56,189,248,.12);
+  --red: #ef4444;
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,.12);
+  --text: #e8e0d0;
+  --text-muted: #7a7060;
+  --text-dim: #3a3530;
+  --mongo: #00ed64;
+  --mongo-dim: rgba(0,237,100,.12);
+  --java: #f89820;
+  --do: #0080ff;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+
+/* ── GRID ── */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(240,165,0,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240,165,0,.025) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,10,10,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .05em;
+}
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 80px 80px;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(240,165,0,.08) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  pointer-events: none;
+}
+.hero-glow2 {
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,237,100,.05) 0%, transparent 70%);
+  bottom: 0; left: 200px;
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp .6s .2s forwards;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  line-height: 1.0;
+  color: var(--text);
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp .7s .35s forwards;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.hero-desc {
+  max-width: 600px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text-muted);
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp .7s .5s forwards;
+}
+.hero-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp .7s .65s forwards;
+}
+.stack-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 2px;
+  border: 1px solid;
+  letter-spacing: .05em;
+  transition: all .2s;
+}
+.stack-chip:hover { transform: translateY(-2px); }
+.chip-java { border-color: rgba(248,152,32,.4); color: var(--java); background: rgba(248,152,32,.06); }
+.chip-mongo { border-color: rgba(0,237,100,.4); color: var(--mongo); background: rgba(0,237,100,.06); }
+.chip-do { border-color: rgba(0,128,255,.4); color: var(--do); background: rgba(0,128,255,.06); }
+.chip-gold { border-color: rgba(240,165,0,.4); color: var(--gold); background: rgba(240,165,0,.06); }
+.chip-purple { border-color: rgba(167,139,250,.4); color: var(--purple); background: rgba(167,139,250,.06); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 80px;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp .7s 1s forwards;
+}
+.scroll-line {
+  width: 40px;
+  height: 1px;
+  background: var(--text-dim);
+  animation: scrollPulse 2s infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes scrollPulse {
+  0%,100% { width: 40px; }
+  50% { width: 20px; }
+}
+
+/* ── SECTIONS ── */
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 100px 80px;
+  border-top: 1px solid var(--border);
+}
+.section-eyebrow {
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 48px;
+  line-height: 1.2;
+}
+
+/* ── INFRASTRUCTURE DIAGRAM ── */
+.infra-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.infra-container::before {
+  content: 'INFRASTRUCTURE';
+  position: absolute;
+  top: 20px; right: 24px;
+  font-size: 9px;
+  letter-spacing: .3em;
+  color: var(--text-dim);
+}
+.infra-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+  min-width: 800px;
+}
+.infra-node {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  transition: all .3s;
+}
+.infra-node:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(240,165,0,.08);
+}
+.infra-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+.infra-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.infra-sub { font-size: 10px; color: var(--text-muted); line-height: 1.6; }
+.infra-badge {
+  position: absolute;
+  top: -8px; right: 10px;
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.badge-local { background: rgba(167,139,250,.2); color: var(--purple); border: 1px solid rgba(167,139,250,.3); }
+.badge-vps   { background: rgba(0,128,255,.2); color: var(--do); border: 1px solid rgba(0,128,255,.3); }
+.badge-gui   { background: rgba(0,237,100,.2); color: var(--mongo); border: 1px solid rgba(0,237,100,.3); }
+
+.infra-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+}
+.arrow-track {
+  width: 80px;
+  height: 2px;
+  background: var(--border2);
+  position: relative;
+  overflow: hidden;
+}
+.arrow-track::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: slideArrow 2.5s infinite;
+}
+.arrow-reverse::after { animation: slideArrowRev 2.5s infinite; }
+@keyframes slideArrow { to { left: 150%; } }
+@keyframes slideArrowRev { from { left: 150%; } to { left: -100%; } }
+.arrow-label { font-size: 9px; color: var(--text-dim); letter-spacing: .05em; white-space: nowrap; }
+.arrow-port { font-size: 9px; color: var(--gold); letter-spacing: .05em; }
+
+/* ── FLOW SIMULATION ── */
+.flow-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.flow-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.flow-topbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.flow-topbar-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.btn-run {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 10px 24px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-run:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-run:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-reset {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .15s;
+  margin-right: 8px;
+}
+.btn-reset:hover { border-color: var(--gold); color: var(--gold); }
+
+.flow-body {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+}
+@media(max-width:900px){ .flow-body{grid-template-columns:1fr;} }
+
+.flow-left { padding: 36px; border-right: 1px solid var(--border); }
+
+/* Request editor */
+.req-editor {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.req-editor label {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.req-editor input, .req-editor textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 2px;
+  outline: none;
+  resize: vertical;
+  transition: border-color .2s;
+  margin-bottom: 10px;
+}
+.req-editor input:focus, .req-editor textarea:focus { border-color: var(--gold); }
+.req-meta { font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
+.req-method { color: var(--green); font-weight: 700; }
+.req-url { color: var(--blue); }
+
+/* Flow nodes */
+.fnode {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 0;
+}
+.fnode-icon {
+  width: 48px; height: 48px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  transition: all .3s;
+  position: relative;
+  z-index: 1;
+}
+.fnode-icon.n-local  { background: var(--purple-dim); border-color: rgba(167,139,250,.2); }
+.fnode-icon.n-ctrl   { background: var(--blue-dim);   border-color: rgba(56,189,248,.2); }
+.fnode-icon.n-svc    { background: var(--gold-dim);   border-color: rgba(240,165,0,.2); }
+.fnode-icon.n-repo   { background: var(--green-dim);  border-color: rgba(34,197,94,.2); }
+.fnode-icon.n-mongo  { background: var(--mongo-dim);  border-color: rgba(0,237,100,.2); }
+.fnode-icon.n-vps    { background: rgba(0,128,255,.1); border-color: rgba(0,128,255,.2); }
+
+.fnode-icon.lit { box-shadow: 0 0 20px currentColor; }
+.fnode-icon.n-local.lit  { box-shadow: 0 0 20px rgba(167,139,250,.7); border-color: var(--purple); }
+.fnode-icon.n-ctrl.lit   { box-shadow: 0 0 20px rgba(56,189,248,.7);  border-color: var(--blue); }
+.fnode-icon.n-svc.lit    { box-shadow: 0 0 20px rgba(240,165,0,.7);   border-color: var(--gold); }
+.fnode-icon.n-repo.lit   { box-shadow: 0 0 20px rgba(34,197,94,.7);   border-color: var(--green); }
+.fnode-icon.n-mongo.lit  { box-shadow: 0 0 20px rgba(0,237,100,.7);   border-color: var(--mongo); }
+.fnode-icon.n-vps.lit    { box-shadow: 0 0 20px rgba(0,128,255,.7);   border-color: var(--do); }
+
+.fnode-info { flex: 1; }
+.fnode-name { font-size: 13px; font-weight: 700; color: var(--text); font-family:'Playfair Display',serif; }
+.fnode-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; line-height: 1.5; }
+.fnode-status {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 2px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  transition: all .3s;
+}
+.fnode-status.active { background: var(--gold-dim); color: var(--gold); border-color: rgba(240,165,0,.4); }
+.fnode-status.done   { background: var(--green-dim); color: var(--green); border-color: rgba(34,197,94,.4); }
+
+.fline-wrap {
+  margin-left: 22px;
+  height: 32px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.fline {
+  width: 2px;
+  height: 100%;
+  background: var(--border2);
+  margin-left: 22px;
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.fline.active { background: linear-gradient(to bottom, var(--gold), var(--green)); }
+.fline.done   { background: var(--green); }
+.fline-fill {
+  position: absolute;
+  top: -100%; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--gold), var(--green));
+  transition: top .45s ease-in-out;
+}
+.fline-fill.go { top: 0; }
+.fline-label {
+  position: absolute;
+  left: 36px;
+  font-size: 9px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition: color .3s;
+}
+.fline-label.active { color: var(--gold); }
+
+/* VPS badge on flow */
+.vps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: .1em;
+  padding: 2px 8px;
+  background: rgba(0,128,255,.1);
+  border: 1px solid rgba(0,128,255,.3);
+  color: var(--do);
+  border-radius: 2px;
+  margin-left: 8px;
+}
+
+/* Response box */
+.resp-label {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 20px 0 8px;
+}
+.resp-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px;
+  font-size: 11px;
+  min-height: 70px;
+  color: var(--text-muted);
+  white-space: pre;
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: auto;
+  transition: border-color .3s, color .3s;
+  line-height: 1.6;
+}
+.resp-box.ok    { color: var(--mongo); border-color: rgba(0,237,100,.3); }
+.resp-box.error { color: var(--red);   border-color: rgba(239,68,68,.3); }
+
+/* Log panel */
+.flow-right { padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; }
+.log-head {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.log-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 480px;
+}
+.log-item {
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 2px;
+  border-left: 2px solid;
+  background: var(--surface2);
+  opacity: 0;
+  transform: translateX(8px);
+  transition: all .25s;
+}
+.log-item.show { opacity: 1; transform: translateX(0); }
+.log-item.info    { border-color: var(--blue); }
+.log-item.success { border-color: var(--mongo); color: var(--mongo); }
+.log-item.warn    { border-color: var(--gold);  color: var(--gold); }
+.log-item.error   { border-color: var(--red);   color: var(--red); }
+.log-ts { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; }
+
+/* ── COMPONENT CARDS ── */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.comp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.comp-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.comp-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+.comp-card:hover::before { opacity: 1; }
+.comp-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.comp-ico {
+  width: 40px; height: 40px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.comp-title { font-family:'Playfair Display',serif; font-size:14px; font-weight:700; color:var(--text); }
+.comp-type  { font-size:10px; color:var(--text-muted); margin-top:2px; }
+.comp-body  { font-size:11px; color:var(--text-muted); line-height:1.8; }
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px;
+  font-size: 11px;
+  margin-top: 14px;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.7;
+}
+.kw{color:#c678dd} .cls{color:#61afef} .ann{color:var(--gold)} .str{color:var(--green)} .cm{color:var(--text-dim)} .mn{color:var(--mongo)}
+
+/* ── VPS SETUP SECTION ── */
+.vps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.vps-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px;
+  transition: all .2s;
+}
+.vps-card:hover { border-color: var(--do); }
+.vps-card-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+.vps-card-name { font-family:'Playfair Display',serif; font-size:13px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.vps-card-body { font-size:11px; color:var(--text-muted); line-height:1.7; }
+.vps-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  margin-top: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+.s-running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+.s-installed { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(56,189,248,.3); }
+
+.dot-pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: dotPulse 1.5s infinite;
+}
+@keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── ENDPOINT TABLE ── */
+.ep-table { width:100%; border-collapse:collapse; font-size:12px; }
+.ep-table th {
+  text-align:left; padding:12px 20px;
+  font-size:9px; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--text-dim);
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.ep-table td { padding:14px 20px; border-bottom:1px solid var(--border); vertical-align:top; }
+.ep-table tr:last-child td { border-bottom:none; }
+.ep-table tr:hover td { background:rgba(240,165,0,.02); }
+.meth { display:inline-block; padding:3px 8px; border-radius:2px; font-weight:700; font-size:10px; }
+.meth-post { background:var(--green-dim); color:var(--green); }
+.meth-get  { background:var(--blue-dim);  color:var(--blue); }
+.s-chip { display:inline-block; padding:2px 7px; border-radius:2px; font-size:10px; margin-bottom:3px; }
+.s201 { background:var(--green-dim); color:var(--green); }
+.s400 { background:rgba(240,165,0,.1); color:var(--gold); }
+.s500 { background:rgba(239,68,68,.1); color:var(--red); }
+
+/* ── SCHEMA ── */
+.schema-wrap { max-width: 520px; }
+.schema-box {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+}
+.schema-head {
+  display:flex; align-items:center; gap:10px;
+  padding:16px 24px;
+  background:var(--mongo-dim);
+  border-bottom:1px solid var(--border);
+  font-family:'Playfair Display',serif;
+  font-size:15px; font-weight:700;
+}
+.schema-table { width:100%; border-collapse:collapse; font-size:12px; }
+.schema-table th { text-align:left; padding:10px 20px; font-size:9px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-dim); background:var(--surface2); border-bottom:1px solid var(--border); }
+.schema-table td { padding:10px 20px; border-bottom:1px solid var(--border); }
+.schema-table tr:last-child td { border-bottom:none; }
+.f-id   { color:var(--gold); font-weight:700; }
+.f-name { color:var(--text); }
+.f-type { color:var(--purple); font-style:italic; font-size:11px; }
+.f-note { color:var(--green); font-size:10px; }
+
+/* ── DEPLOY SECTION ── */
+.deploy-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.deploy-step {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all .4s;
+}
+.deploy-step.visible { opacity: 1; transform: translateX(0); }
+.deploy-step:last-child { border-bottom: none; }
+.step-num {
+  width: 48px; height: 48px;
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(240,165,0,.2);
+  flex-shrink: 0;
+}
+.step-content {}
+.step-title { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:8px; }
+.step-body  { font-size:11px; color:var(--text-muted); line-height:1.8; }
+.cmd-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--gold);
+  border-radius: 2px;
+  padding: 12px 16px;
+  font-size: 11px;
+  margin-top: 10px;
+  color: var(--green);
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.7;
+}
+
+/* ── FOOTER ── */
+.footer {
+  position: relative; z-index: 1;
+  padding: 40px 80px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-logo { font-family:'Playfair Display',serif; font-size:14px; color:var(--gold); font-weight:700; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+/* Intersection observer targets */
+.reveal { opacity:0; transform:translateY(24px); transition: opacity .6s, transform .6s; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Course Domain</div>
+  <ul class="nav-links">
+    <li><a href="#infra">Infrastructure</a></li>
+    <li><a href="#flow">Request Flow</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#vps">VPS Setup</a></li>
+    <li><a href="#deploy">Deploy</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow">Full Stack Architecture · v2.0 · April 2026</div>
+  <h1>Course<br><em>Domain</em></h1>
+  <p class="hero-desc">
+    Spring Boot 4.0.5 microservice migrated from PostgreSQL to MongoDB,
+    deployed on a DigitalOcean VPS in Frankfurt — complete infrastructure
+    documentation with live request simulation.
+  </p>
+  <div class="hero-stack">
+    <div class="stack-chip chip-java">☕ Java 25 · SDKMAN</div>
+    <div class="stack-chip chip-mongo">🍃 MongoDB 8.0.21</div>
+    <div class="stack-chip chip-do">🌊 DigitalOcean · Frankfurt</div>
+    <div class="stack-chip chip-gold">🌱 Spring Boot 4.0.5</div>
+    <div class="stack-chip chip-purple">🧭 MongoDB Compass</div>
+    <div class="stack-chip chip-gold">📨 Kafka (scaffolded)</div>
+    <div class="stack-chip chip-mongo">🔐 Auth · Nginx · PM2</div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- INFRASTRUCTURE -->
+<section class="section reveal" id="infra">
+  <div class="section-eyebrow">§ 01 — Infrastructure</div>
+  <div class="section-title">How Everything Connects</div>
+
+  <div class="infra-container reveal">
+    <div style="overflow-x:auto;">
+    <div class="infra-grid">
+
+      <!-- Local Dev -->
+      <div class="infra-node">
+        <span class="infra-badge badge-local">Local</span>
+        <span class="infra-icon">💻</span>
+        <div class="infra-name">Local Machine</div>
+        <div class="infra-sub">
+          Windows 11<br>
+          Spring Boot app<br>
+          Java 25 · Maven<br>
+          MongoDB Compass
+        </div>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="infra-arrow">
+        <div class="arrow-track"></div>
+        <div class="arrow-label">SSH Tunnel</div>
+        <div class="arrow-port">:22 / :27017</div>
+        <div class="arrow-track arrow-reverse" style="margin-top:4px;"></div>
+      </div>
+
+      <!-- VPS -->
+      <div class="infra-node" style="border-color:rgba(0,128,255,.3);background:rgba(0,128,255,.04);">
+        <span class="infra-badge badge-vps">DigitalOcean VPS</span>
+        <span class="infra-icon">🌊</span>
+        <div class="infra-name">Ubuntu 24.04 Droplet</div>
+        <div class="infra-sub">
+          165.245.223.137<br>
+          Frankfurt · 1vCPU · 512MB<br>
+          MongoDB 8.0 · Nginx<br>
+          Node.js · PM2 · Java 25
+        </div>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="infra-arrow">
+        <div class="arrow-track"></div>
+        <div class="arrow-label">localhost</div>
+        <div class="arrow-port">:27017</div>
+        <div class="arrow-track arrow-reverse" style="margin-top:4px;"></div>
+      </div>
+
+      <!-- MongoDB -->
+      <div class="infra-node" style="border-color:rgba(0,237,100,.3);background:rgba(0,237,100,.04);">
+        <span class="infra-badge badge-gui">Running</span>
+        <span class="infra-icon">🍃</span>
+        <div class="infra-name">MongoDB 8.0.21</div>
+        <div class="infra-sub">
+          DB: <strong style="color:var(--mongo)">course</strong><br>
+          Collection: <strong style="color:var(--mongo)">course</strong><br>
+          Auth: admin user<br>
+          bindIp: 0.0.0.0
+        </div>
+      </div>
+
+    </div>
+    </div>
+
+    <!-- Compass note -->
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px;">🧭 MONGODB COMPASS</div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+          Connected via <strong style="color:var(--text)">SSH Tunnel</strong> on port 22<br>
+          URI: <code style="color:var(--mongo)">mongodb://127.0.0.1:27017</code><br>
+          Auth: admin / DigitalOcean2026Debesis
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px;">🌱 SPRING BOOT (LOCAL)</div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+          Connects directly to VPS public IP<br>
+          URI: <code style="color:var(--gold)">mongodb://admin:***@165.245.223.137:27017</code><br>
+          Port 27017 open · UFW allowed
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px;">📁 APP FOLDERS ON VPS</div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+          <code style="color:var(--text)">/opt/course-domain</code> → Spring Boot jar<br>
+          <code style="color:var(--text)">/opt/course-frontend</code> → Angular/React<br>
+          <code style="color:var(--text)">/opt/course-node</code> → Node.js server
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUEST FLOW SIMULATION -->
+<section class="section reveal" id="flow">
+  <div class="section-eyebrow">§ 02 — Request Flow</div>
+  <div class="section-title">Live Simulation</div>
+
+  <div class="flow-wrap">
+    <div class="flow-topbar">
+      <div>
+        <div class="flow-topbar-title">POST /api/v1/courses — End to End</div>
+        <div class="flow-topbar-sub">Spring Boot → MongoDB on DigitalOcean VPS</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-reset" id="resetBtn">↺ Reset</button>
+        <button class="btn-run" id="runBtn">▶ Simulate</button>
+      </div>
+    </div>
+
+    <div class="flow-body">
+      <div class="flow-left">
+
+        <!-- Request editor -->
+        <div class="req-editor">
+          <label>Request Payload</label>
+          <input id="titleInput" value="Spring Boot Fundamentals" placeholder="Course title…">
+          <textarea id="descInput" rows="2">Build a production-grade REST API with Spring Boot and MongoDB</textarea>
+          <div class="req-meta">
+            <span class="req-method">POST</span>
+            <span class="req-url">http://localhost:8080/api/v1/courses</span>
+            <span style="color:var(--text-dim);font-size:10px;">Content-Type: application/json</span>
+          </div>
+        </div>
+
+        <!-- Node: Client -->
+        <div class="fnode" id="fn-client">
+          <div class="fnode-icon n-local" id="fi-client">💻</div>
+          <div class="fnode-info">
+            <div class="fnode-name">HTTP Client</div>
+            <div class="fnode-desc">Local machine · Postman / curl / browser</div>
+          </div>
+          <div class="fnode-status" id="fs-client">Idle</div>
+        </div>
+
+        <div class="fline-wrap">
+          <div class="fline" id="fl-1"><div class="fline-fill" id="ff-1"></div></div>
+          <div class="fline-label" id="flbl-1">POST /api/v1/courses → @RestController</div>
+        </div>
+
+        <!-- Node: Controller -->
+        <div class="fnode" id="fn-ctrl">
+          <div class="fnode-icon n-ctrl" id="fi-ctrl">🎮</div>
+          <div class="fnode-info">
+            <div class="fnode-name">CourseController</div>
+            <div class="fnode-desc">@PostMapping · @Valid · deserializes JSON → CourseRequestDTO</div>
+          </div>
+          <div class="fnode-status" id="fs-ctrl">Idle</div>
+        </div>
+
+        <div class="fline-wrap">
+          <div class="fline" id="fl-2"><div class="fline-fill" id="ff-2"></div></div>
+          <div class="fline-label" id="flbl-2">CourseRequestDTO → createCourse()</div>
+        </div>
+
+        <!-- Node: Service -->
+        <div class="fnode" id="fn-svc">
+          <div class="fnode-icon n-svc" id="fi-svc">⚙️</div>
+          <div class="fnode-info">
+            <div class="fnode-name">CourseServiceImpl</div>
+            <div class="fnode-desc">Maps DTO → @Document Course entity · calls repository.save()</div>
+          </div>
+          <div class="fnode-status" id="fs-svc">Idle</div>
+        </div>
+
+        <div class="fline-wrap">
+          <div class="fline" id="fl-3"><div class="fline-fill" id="ff-3"></div></div>
+          <div class="fline-label" id="flbl-3">Course @Document → MongoRepository.save()</div>
+        </div>
+
+        <!-- Node: Repository -->
+        <div class="fnode" id="fn-repo">
+          <div class="fnode-icon n-repo" id="fi-repo">🗃️</div>
+          <div class="fnode-info">
+            <div class="fnode-name">CourseRepository</div>
+            <div class="fnode-desc">MongoRepository&lt;Course, String&gt; · Spring Data generates driver calls</div>
+          </div>
+          <div class="fnode-status" id="fs-repo">Idle</div>
+        </div>
+
+        <div class="fline-wrap">
+          <div class="fline" id="fl-4"><div class="fline-fill" id="ff-4"></div></div>
+          <div class="fline-label" id="flbl-4">insertOne() over TCP → 165.245.223.137:27017</div>
+        </div>
+
+        <!-- Node: VPS -->
+        <div class="fnode" id="fn-vps">
+          <div class="fnode-icon n-vps" id="fi-vps">🌊</div>
+          <div class="fnode-info">
+            <div class="fnode-name">DigitalOcean VPS <span class="vps-badge">165.245.223.137</span></div>
+            <div class="fnode-desc">MongoDB 8.0.21 · UFW port 27017 open · auth enabled</div>
+          </div>
+          <div class="fnode-status" id="fs-vps">Idle</div>
+        </div>
+
+        <div class="fline-wrap">
+          <div class="fline" id="fl-5"><div class="fline-fill" id="ff-5"></div></div>
+          <div class="fline-label" id="flbl-5">db.course.insertOne({ title, description, createdAt })</div>
+        </div>
+
+        <!-- Node: MongoDB -->
+        <div class="fnode" id="fn-mongo">
+          <div class="fnode-icon n-mongo" id="fi-mongo">🍃</div>
+          <div class="fnode-info">
+            <div class="fnode-name">MongoDB · db: course · collection: course</div>
+            <div class="fnode-desc">BSON document stored · _id: ObjectId auto-generated · @CreatedDate stamps createdAt</div>
+          </div>
+          <div class="fnode-status" id="fs-mongo">Idle</div>
+        </div>
+
+        <div style="height:16px;"></div>
+        <div style="font-size:10px;color:var(--text-dim);padding-left:64px;">↑ Response propagates back → 201 Created + CourseResponseDTO</div>
+
+        <div class="resp-label">HTTP Response</div>
+        <div class="resp-box" id="respBox">// Response appears after simulation…</div>
+      </div>
+
+      <!-- Log -->
+      <div class="flow-right">
+        <div class="log-head">⚡ Execution Trace</div>
+        <div class="log-list" id="logList">
+          <div style="font-size:11px;color:var(--text-dim);padding:16px 0;text-align:center;">
+            Press <strong style="color:var(--gold)">▶ Simulate</strong> to trace the request
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPONENTS -->
+<section class="section reveal" id="components">
+  <div class="section-eyebrow">§ 03 — Components</div>
+  <div class="section-title">Code Reference</div>
+  <div class="comp-grid">
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--blue-dim);">🎮</div>
+        <div><div class="comp-title">CourseController</div><div class="comp-type">@RestController · Web Layer</div></div>
+      </div>
+      <div class="comp-body">Handles HTTP traffic. Maps <code style="color:var(--blue)">POST /api/v1/courses</code>. Applies <code>@Valid</code> for Bean Validation before the method body executes. Returns <code>ResponseEntity&lt;CourseResponseDTO&gt;</code> with 201 status.</div>
+      <div class="code-block"><span class="ann">@PostMapping</span>
+<span class="kw">public</span> ResponseEntity&lt;<span class="cls">CourseResponseDTO</span>&gt; createCourse(
+    <span class="ann">@Valid</span> <span class="ann">@RequestBody</span> <span class="cls">CourseRequestDTO</span> dto) {
+  <span class="kw">return</span> ResponseEntity
+    .status(HttpStatus.<span class="cls">CREATED</span>)
+    .body(courseService.createCourse(dto));
+}</div>
+    </div>
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--gold-dim);">⚙️</div>
+        <div><div class="comp-title">CourseServiceImpl</div><div class="comp-type">@Service · Business Layer</div></div>
+      </div>
+      <div class="comp-body">Business logic layer. Maps <code>CourseRequestDTO</code> → <code>Course</code> MongoDB document → calls repository → maps result back to <code>CourseResponseDTO</code>. id is now <code style="color:var(--mongo)">String</code> (was Long).</div>
+      <div class="code-block"><span class="cls">Course</span> course = <span class="kw">new</span> <span class="cls">Course</span>();
+course.setTitle(dto.getTitle());
+course.setDescription(dto.getDescription());
+<span class="cls">Course</span> saved = courseRepository.save(course);
+<span class="kw">return new</span> <span class="cls">CourseResponseDTO</span>(
+  saved.getId(),    <span class="cm">// String ObjectId</span>
+  saved.getTitle(),
+  saved.getDescription(),
+  saved.getCreatedAt()
+);</div>
+    </div>
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--green-dim);">🗃️</div>
+        <div><div class="comp-title">CourseRepository</div><div class="comp-type">MongoRepository · Data Layer</div></div>
+      </div>
+      <div class="comp-body">Migrated from <code>JpaRepository&lt;Course, Long&gt;</code> to <code style="color:var(--mongo)">MongoRepository&lt;Course, String&gt;</code>. Spring Data MongoDB generates all driver calls at runtime. Zero boilerplate.</div>
+      <div class="code-block"><span class="kw">public interface</span> <span class="cls">CourseRepository</span>
+    <span class="kw">extends</span> <span class="mn">MongoRepository</span>&lt;<span class="cls">Course</span>, String&gt; {
+  <span class="cm">// save() → insertOne / replaceOne</span>
+  <span class="cm">// findById() → find({_id:...})</span>
+  <span class="cm">// findAll() → find({})</span>
+  <span class="cm">// delete() → deleteOne</span>
+}</div>
+    </div>
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--mongo-dim);">📦</div>
+        <div><div class="comp-title">Course</div><div class="comp-type">@Document · MongoDB Model</div></div>
+      </div>
+      <div class="comp-body">Migrated from JPA <code>@Entity</code> to MongoDB <code style="color:var(--mongo)">@Document</code>. All JPA annotations removed. <code>@Id</code> now from Spring Data. id is <code>String</code> (ObjectId). <code>@CreatedDate</code> auto-stamps.</div>
+      <div class="code-block"><span class="ann">@Document</span>(collection = <span class="str">"course"</span>)
+<span class="ann">@Data @NoArgsConstructor @AllArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">Course</span> {
+  <span class="ann">@Id</span>
+  <span class="kw">private</span> String id;
+  <span class="kw">private</span> String title;
+  <span class="kw">private</span> String description;
+  <span class="ann">@CreatedDate</span>
+  <span class="kw">private</span> Instant createdAt;
+}</div>
+    </div>
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--purple-dim);">📥</div>
+        <div><div class="comp-title">CourseRequestDTO</div><div class="comp-type">Input DTO · Bean Validation</div></div>
+      </div>
+      <div class="comp-body">Unchanged from PostgreSQL version. <code>@NotBlank</code> rejects null/empty. <code>@Size(max=150)</code> enforces length. Validation happens at the controller before any service code runs.</div>
+      <div class="code-block"><span class="ann">@Data @NoArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">CourseRequestDTO</span> {
+  <span class="ann">@NotBlank @Size</span>(max=<span class="str">150</span>)
+  <span class="kw">private</span> String title;
+  <span class="ann">@NotBlank @Size</span>(max=<span class="str">1000</span>)
+  <span class="kw">private</span> String description;
+}</div>
+    </div>
+
+    <div class="comp-card reveal">
+      <div class="comp-head">
+        <div class="comp-ico" style="background:var(--blue-dim);">📤</div>
+        <div><div class="comp-title">CourseResponseDTO</div><div class="comp-type">Output DTO · 201 Created</div></div>
+      </div>
+      <div class="comp-body"><code>courseId</code> changed from <code>Long</code> to <code style="color:var(--mongo)">String</code> to match MongoDB ObjectId. Everything else unchanged. Decouples API contract from internal document model.</div>
+      <div class="code-block"><span class="ann">@Data @AllArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">CourseResponseDTO</span> {
+  <span class="kw">private</span> String courseId;  <span class="cm">// was Long</span>
+  <span class="kw">private</span> String title;
+  <span class="kw">private</span> String description;
+  <span class="kw">private</span> Instant createdAt;
+}</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- VPS SETUP -->
+<section class="section reveal" id="vps">
+  <div class="section-eyebrow">§ 04 — VPS Setup</div>
+  <div class="section-title">DigitalOcean Droplet</div>
+
+  <div class="vps-grid">
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">🐧</span>
+      <div class="vps-card-name">Ubuntu 24.04 LTS</div>
+      <div class="vps-card-body">Noble Numbat · 6.8.0-71-generic · x86_64 · 1 vCPU · 512MB RAM · 10GB SSD · Frankfurt datacenter</div>
+      <div class="vps-card-status s-running"><div class="dot-pulse"></div> Running</div>
+    </div>
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">🍃</span>
+      <div class="vps-card-name">MongoDB 8.0.21</div>
+      <div class="vps-card-body">Installed via official apt repo · systemd service · auth enabled · admin user created · port 27017</div>
+      <div class="vps-card-status s-running"><div class="dot-pulse"></div> Active</div>
+    </div>
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">☕</span>
+      <div class="vps-card-name">Java 25</div>
+      <div class="vps-card-body">Installed via SDKMAN · OpenJDK 25-open · JAVA_HOME configured in systemd service environment</div>
+      <div class="vps-card-status s-installed">✓ Installed</div>
+    </div>
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">🟢</span>
+      <div class="vps-card-name">Node.js 20 LTS + PM2</div>
+      <div class="vps-card-body">Installed via NodeSource · PM2 process manager globally installed · auto-restart on reboot</div>
+      <div class="vps-card-status s-installed">✓ Installed</div>
+    </div>
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">⚙️</span>
+      <div class="vps-card-name">Nginx</div>
+      <div class="vps-card-body">Reverse proxy · serves Angular/React on port 80 · proxies /api/ to Spring Boot 8080 · /node/ to Node 3000</div>
+      <div class="vps-card-status s-running"><div class="dot-pulse"></div> Active</div>
+    </div>
+    <div class="vps-card reveal">
+      <span class="vps-card-icon">🔥</span>
+      <div class="vps-card-name">UFW Firewall</div>
+      <div class="vps-card-body">Port 22 (SSH) · Port 80 (HTTP) · Port 27017 (MongoDB external) · Port 8080 (Spring Boot)</div>
+      <div class="vps-card-status s-running"><div class="dot-pulse"></div> Active</div>
+    </div>
+  </div>
+
+  <!-- mongod.conf -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:28px;margin-top:8px;" class="reveal">
+    <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;">📄 /etc/mongod.conf</div>
+    <div class="code-block" style="border-left-color:var(--mongo);">storage:
+  dbPath: /var/lib/mongodb
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+net:
+  port: 27017
+  bindIp: 127.0.0.1,165.245.223.137
+
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo
+
+security:
+  authorization: enabled</div>
+  </div>
+</section>
+
+<!-- API REFERENCE -->
+<section class="section reveal">
+  <div class="section-eyebrow">§ 05 — API Reference</div>
+  <div class="section-title">Endpoints</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;" class="reveal">
+    <div style="padding:16px 24px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;">
+      Base URL: <code style="color:var(--gold)">http://localhost:8080</code>
+      &nbsp;·&nbsp;
+      MongoDB: <code style="color:var(--mongo)">mongodb://admin:***@165.245.223.137:27017/course</code>
+    </div>
+    <table class="ep-table">
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Body</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="meth meth-post">POST</span></td>
+          <td><code style="color:var(--text);">/api/v1/courses</code></td>
+          <td style="color:var(--text-muted);font-size:11px;">Create a new course. Validates title &amp; description. Inserts BSON document into MongoDB collection <code style="color:var(--mongo)">course</code>.</td>
+          <td style="font-size:11px;"><code style="color:var(--green)">{ title, description }</code></td>
+          <td>
+            <div><span class="s-chip s201">201 Created</span></div>
+            <div><span class="s-chip s400">400 Validation</span></div>
+            <div><span class="s-chip" style="background:rgba(239,68,68,.1);color:var(--red);">500 Server Error</span></div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="meth meth-get">GET</span></td>
+          <td><code style="color:var(--text-dim);">/api/v1/courses</code></td>
+          <td style="color:var(--text-dim);font-size:11px;font-style:italic;">Planned — list all courses</td>
+          <td style="color:var(--text-dim);">—</td>
+          <td><span class="s-chip" style="background:var(--surface2);color:var(--text-dim);">Not yet implemented</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- MONGODB SCHEMA -->
+<section class="section reveal">
+  <div class="section-eyebrow">§ 06 — Data Model</div>
+  <div class="section-title">MongoDB Document Schema</div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+    <div class="schema-wrap reveal">
+      <div class="schema-box">
+        <div class="schema-head">🍃 db.course.findOne()</div>
+        <table class="schema-table">
+          <thead><tr><th>Field</th><th>BSON Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="f-id">🔑 _id</td><td class="f-type">ObjectId</td><td class="f-note">Auto-generated</td></tr>
+            <tr><td class="f-name">title</td><td class="f-type">String</td><td class="f-note">max 150 chars</td></tr>
+            <tr><td class="f-name">description</td><td class="f-type">String</td><td class="f-note">max 1000 chars</td></tr>
+            <tr><td class="f-name">createdAt</td><td class="f-type">Date (ISODate)</td><td class="f-note">@CreatedDate auto</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="flex:1;min-width:260px;" class="reveal">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;">Migration Summary</div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:2;">
+          🔄 <strong style="color:var(--text);">JPA → Spring Data MongoDB</strong><br>
+          🔄 <strong style="color:var(--text);">PostgreSQL → MongoDB 8.0.21</strong><br>
+          🔄 <strong style="color:var(--text);">Long id → String (ObjectId)</strong><br>
+          🔄 <strong style="color:var(--text);">@Entity → @Document</strong><br>
+          🔄 <strong style="color:var(--text);">JpaRepository → MongoRepository</strong><br>
+          🔄 <strong style="color:var(--text);">@PrePersist → @CreatedDate</strong><br>
+          🔄 <strong style="color:var(--text);">Supabase → DigitalOcean VPS</strong><br>
+          ✅ <strong style="color:var(--text);">Validation, Kafka, Lombok — unchanged</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOY -->
+<section class="section reveal" id="deploy">
+  <div class="section-eyebrow">§ 07 — Deployment</div>
+  <div class="section-title">Deploy to VPS</div>
+  <div class="deploy-steps">
+
+    <div class="deploy-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Build the Spring Boot JAR locally</div>
+        <div class="step-body">Package the application skipping tests to generate the executable jar file.</div>
+        <div class="cmd-block">./mvnw clean package -DskipTests
+# output: target/course-domain-0.0.1-SNAPSHOT.jar</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Copy the JAR to the Droplet</div>
+        <div class="step-body">Upload the built jar to the app folder on the VPS using SCP.</div>
+        <div class="cmd-block">scp target/course-domain-0.0.1-SNAPSHOT.jar \
+  root@165.245.223.137:/opt/course-domain/course-domain.jar</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Start the Spring Boot service on VPS</div>
+        <div class="step-body">SSH into the Droplet and start the systemd service. It will auto-restart on reboot.</div>
+        <div class="cmd-block">ssh root@165.245.223.137
+systemctl start course-domain
+systemctl status course-domain</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Build and deploy the frontend</div>
+        <div class="step-body">Build Angular/React locally then copy the dist folder to the VPS frontend directory.</div>
+        <div class="cmd-block"># Angular
+ng build --configuration production
+scp -r dist/* root@165.245.223.137:/opt/course-frontend/
+
+# React
+npm run build
+scp -r build/* root@165.245.223.137:/opt/course-frontend/</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Configure Nginx reverse proxy</div>
+        <div class="step-body">Route traffic: / → frontend, /api/ → Spring Boot :8080, /node/ → Node.js :3000</div>
+        <div class="cmd-block">server {
+  listen 80;
+  server_name 165.245.223.137;
+
+  location / {
+    root /opt/course-frontend;
+    try_files $uri $uri/ /index.html;
+  }
+  location /api/ {
+    proxy_pass http://localhost:8080;
+  }
+  location /node/ {
+    proxy_pass http://localhost:3000;
+  }
+}</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">Course Domain</div>
+  <div>Spring Boot 4.0.5 · MongoDB 8.0.21 · Java 25 · DigitalOcean Frankfurt</div>
+  <div>v2.0 — April 2026</div>
+</footer>
+
+<script>
+// ── INTERSECTION OBSERVER ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+      // deploy steps stagger
+      if(e.target.classList.contains('deploy-step')) {
+        const steps = document.querySelectorAll('.deploy-step');
+        steps.forEach((s,i) => setTimeout(() => s.classList.add('visible'), i*120));
+      }
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal, .deploy-step').forEach(el => observer.observe(el));
+
+// ── SIMULATION ──
+const runBtn   = document.getElementById('runBtn');
+const resetBtn = document.getElementById('resetBtn');
+const logList  = document.getElementById('logList');
+const respBox  = document.getElementById('respBox');
+
+let running = false;
+
+function resetAll() {
+  running = false;
+  runBtn.disabled = false;
+  runBtn.textContent = '▶ Simulate';
+  ['client','ctrl','svc','repo','vps','mongo'].forEach(n => {
+    const ic = document.getElementById('fi-'+n);
+    const st = document.getElementById('fs-'+n);
+    if(ic) ic.classList.remove('lit');
+    if(st) { st.classList.remove('active','done'); st.textContent = 'Idle'; }
+  });
+  [1,2,3,4,5].forEach(i => {
+    const fl = document.getElementById('fl-'+i);
+    const ff = document.getElementById('ff-'+i);
+    const lb = document.getElementById('flbl-'+i);
+    if(fl) { fl.classList.remove('active','done'); }
+    if(ff) { ff.classList.remove('go'); ff.style.background=''; }
+    if(lb) lb.classList.remove('active');
+  });
+  logList.innerHTML = `<div style="font-size:11px;color:var(--text-dim);padding:16px 0;text-align:center;">
+    Press <strong style="color:var(--gold)">▶ Simulate</strong> to trace the request</div>`;
+  respBox.textContent = '// Response appears after simulation…';
+  respBox.className = 'resp-box';
+}
+
+function addLog(msg, type='info', delay=0) {
+  return new Promise(res => setTimeout(() => {
+    const ts = new Date().toTimeString().slice(0,12);
+    const el = document.createElement('div');
+    el.className = `log-item ${type}`;
+    el.innerHTML = `<div class="log-ts">${ts}</div>${msg}`;
+    logList.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    logList.scrollTop = logList.scrollHeight;
+    res();
+  }, delay));
+}
+
+function setActive(id) {
+  document.getElementById('fi-'+id)?.classList.add('lit');
+  const s = document.getElementById('fs-'+id);
+  if(s){ s.classList.add('active'); s.textContent = 'Processing…'; }
+}
+function setDone(id, label='Done ✓') {
+  document.getElementById('fi-'+id)?.classList.remove('lit');
+  const s = document.getElementById('fs-'+id);
+  if(s){ s.classList.remove('active'); s.classList.add('done'); s.textContent = label; }
+}
+function animLine(i) {
+  return new Promise(res => {
+    const fl = document.getElementById('fl-'+i);
+    const ff = document.getElementById('ff-'+i);
+    const lb = document.getElementById('flbl-'+i);
+    if(fl) fl.classList.add('active');
+    if(lb) lb.classList.add('active');
+    setTimeout(() => {
+      if(ff) ff.classList.add('go');
+      setTimeout(() => {
+        if(fl){ fl.classList.remove('active'); fl.classList.add('done'); }
+        if(ff){ ff.style.background='var(--green)'; }
+        res();
+      }, 500);
+    }, 80);
+  });
+}
+const sleep = ms => new Promise(r => setTimeout(r,ms));
+
+async function simulate() {
+  if(running) return;
+  running = true;
+  runBtn.disabled = true;
+  runBtn.textContent = '⏳ Running…';
+  logList.innerHTML = '';
+
+  const title = document.getElementById('titleInput').value || 'Untitled';
+  const desc  = document.getElementById('descInput').value  || 'No description';
+
+  // Client
+  setActive('client');
+  await addLog('💻 <strong>HTTP Client</strong> — Building request…', 'info');
+  await sleep(400);
+  await addLog(`→ POST /api/v1/courses<br><code style="color:var(--green)">{ "title": "${title}" }</code>`, 'info', 150);
+  await sleep(500);
+  setDone('client', 'Sent ✓');
+
+  await animLine(1);
+
+  // Controller
+  setActive('ctrl');
+  await sleep(300);
+  await addLog('🎮 <strong>CourseController</strong> — @PostMapping matched', 'info');
+  await sleep(250);
+  await addLog('→ Deserializing JSON → <code>CourseRequestDTO</code>', 'info', 150);
+  await sleep(300);
+  await addLog('→ @Valid — running Bean Validation…', 'warn', 100);
+  await sleep(350);
+
+  if(!title.trim()) {
+    await addLog('✗ Validation FAILED: title @NotBlank', 'error', 100);
+    respBox.textContent = 'HTTP 400 Bad Request\n\n{ "status": 400, "error": "title must not be blank" }';
+    respBox.className = 'resp-box error';
+    setDone('ctrl', '400 ✗');
+    runBtn.disabled = false; runBtn.textContent = '▶ Simulate'; running = false;
+    return;
+  }
+
+  await addLog('✓ Validation passed', 'success', 100);
+  await sleep(300);
+  setDone('ctrl', 'Valid ✓');
+
+  await animLine(2);
+
+  // Service
+  setActive('svc');
+  await sleep(300);
+  await addLog('⚙️ <strong>CourseServiceImpl</strong> — createCourse() invoked', 'info');
+  await sleep(250);
+  await addLog('→ Mapping DTO → <code>@Document Course</code> entity', 'info', 150);
+  await sleep(300);
+  await addLog('→ Calling <code>courseRepository.save(course)</code>…', 'info', 100);
+  await sleep(400);
+  setDone('svc', 'Delegated ✓');
+
+  await animLine(3);
+
+  // Repository
+  setActive('repo');
+  await sleep(300);
+  await addLog('🗃️ <strong>CourseRepository</strong> — MongoRepository translates to driver call', 'info');
+  await sleep(250);
+  await addLog('→ Spring Data: <code style="color:var(--mongo)">db.course.insertOne({...})</code>', 'info', 150);
+  await sleep(400);
+  setDone('repo', 'Executing ✓');
+
+  await animLine(4);
+
+  // VPS
+  setActive('vps');
+  await sleep(300);
+  await addLog('🌊 <strong>DigitalOcean VPS</strong> — TCP connection to 165.245.223.137:27017', 'info');
+  await sleep(250);
+  await addLog('→ UFW port 27017 open · Auth verified · admin user', 'warn', 150);
+  await sleep(400);
+  setDone('vps', 'Connected ✓');
+
+  await animLine(5);
+
+  // MongoDB
+  setActive('mongo');
+  await sleep(300);
+  await addLog('🍃 <strong>MongoDB 8.0.21</strong> — Executing insertOne()', 'info');
+  await sleep(300);
+  await addLog('→ @CreatedDate: <code>createdAt = ISODate(now)</code>', 'warn', 150);
+  await sleep(300);
+  await addLog('→ Document stored · _id = ObjectId generated', 'success', 150);
+  await sleep(400);
+  setDone('mongo', 'Saved ✓');
+
+  // Response back
+  await sleep(300);
+  await addLog('← Response propagates back through all layers…', 'info');
+  await sleep(250);
+  await addLog('← MongoRepository returns saved <code>Course</code> document', 'info', 100);
+  await sleep(250);
+  await addLog('← Service maps → <code>CourseResponseDTO</code> (id: String)', 'info', 100);
+  await sleep(250);
+  await addLog('← Controller wraps in <code>ResponseEntity.status(201)</code>', 'info', 100);
+  await sleep(350);
+
+  const fakeId  = Array.from({length:24},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+  const nowStr  = new Date().toISOString();
+  const resp = `HTTP/1.1 201 Created\nContent-Type: application/json\n\n{\n  "courseId": "${fakeId}",\n  "title": "${title}",\n  "description": "${desc.slice(0,50)}${desc.length>50?'…':''}",\n  "createdAt": "${nowStr}"\n}`;
+
+  respBox.textContent = resp;
+  respBox.className = 'resp-box ok';
+
+  await addLog('✅ <strong>201 Created</strong> — CourseResponseDTO returned', 'success', 150);
+  await addLog(`→ courseId: <code style="color:var(--mongo)">${fakeId.slice(0,12)}…</code>`, 'success', 100);
+
+  runBtn.disabled = false;
+  runBtn.textContent = '▶ Simulate Again';
+  running = false;
+}
+
+runBtn.addEventListener('click', simulate);
+resetBtn.addEventListener('click', resetAll);
+</script>
+</body>
+</html>
