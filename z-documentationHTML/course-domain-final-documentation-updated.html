@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>course-domain Final Documentation | Debesis LMS</title>
+<style>
+:root{
+  --bg:#070a12;--panel:#0d1324;--panel2:#101a30;--glass:rgba(255,255,255,.065);--line:rgba(255,255,255,.13);
+  --text:#edf3ff;--muted:#9ba9c7;--soft:#cbd5e1;--cyan:#35d8ff;--green:#00ed64;--orange:#ffb86b;--red:#ff5d73;--blue:#7aa2ff;--purple:#c084fc;--gold:#facc15;
+  --shadow:0 30px 90px rgba(0,0,0,.45);--radius:24px;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(53,216,255,.16),transparent 28%),radial-gradient(circle at 95% 10%,rgba(192,132,252,.13),transparent 32%),linear-gradient(180deg,#050812 0%,#080b13 45%,#05070d 100%);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 85%);pointer-events:none;z-index:-1}
+a{color:inherit;text-decoration:none} .layout{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100vh} aside{position:sticky;top:0;height:100vh;padding:22px 18px;border-right:1px solid var(--line);background:rgba(5,8,18,.72);backdrop-filter:blur(18px);overflow:auto}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:18px} .logo{width:44px;height:44px;border-radius:15px;background:conic-gradient(from 220deg,var(--cyan),var(--green),var(--purple),var(--cyan));box-shadow:0 0 42px rgba(53,216,255,.33)} .brand h1{font-size:15px;line-height:1.1;margin:0} .brand span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.search{position:relative;margin:16px 0} .search input{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--text);outline:none} .search input:focus{border-color:rgba(53,216,255,.65);box-shadow:0 0 0 4px rgba(53,216,255,.08)}
+.nav a{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);padding:10px 12px;border-radius:14px;font-size:13px;margin:3px 0;border:1px solid transparent} .nav a:hover,.nav a.active{background:rgba(255,255,255,.07);border-color:var(--line);color:#fff} .nav small{opacity:.6}
+main{padding:34px clamp(18px,4vw,58px) 90px;max-width:1450px} .hero{position:relative;padding:48px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.025));border-radius:34px;box-shadow:var(--shadow);overflow:hidden} .hero:after{content:"";position:absolute;width:500px;height:500px;border-radius:50%;right:-190px;top:-230px;background:radial-gradient(circle,rgba(0,237,100,.28),transparent 65%);filter:blur(10px)} .kicker{display:inline-flex;gap:8px;align-items:center;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase} .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 8px rgba(0,237,100,.12);animation:pulse 1.6s infinite} @keyframes pulse{50%{box-shadow:0 0 0 14px rgba(0,237,100,0)}}
+.hero h2{font-size:clamp(38px,6vw,76px);line-height:.95;margin:20px 0 14px;letter-spacing:-.06em} .grad{background:linear-gradient(90deg,#fff,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent} .hero p{max-width:920px;color:var(--soft);font-size:18px} .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px} .chip,.badge{border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:999px;padding:7px 11px;font-size:12px;color:var(--soft)} .badge.ok{color:var(--green);border-color:rgba(0,237,100,.35)} .badge.warn{color:var(--orange);border-color:rgba(255,184,107,.35)} .badge.bad{color:var(--red);border-color:rgba(255,93,115,.35)}
+.section{margin-top:34px;padding:30px;border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.03));box-shadow:0 18px 70px rgba(0,0,0,.24)} .section h2{font-size:32px;letter-spacing:-.04em;margin:0 0 10px} .section h3{font-size:20px;margin:24px 0 10px} .lead{color:var(--soft);font-size:16px;max-width:1050px} .grid{display:grid;gap:16px} .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))} .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))} .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))} .card{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.055);padding:18px;position:relative;overflow:hidden} .card:hover{transform:translateY(-2px);transition:.25s;border-color:rgba(53,216,255,.35)} .card h4{margin:0 0 8px;font-size:16px} .card p,.card li{color:var(--muted);font-size:14px} .metric{font-size:26px;font-weight:900;color:#fff} .muted{color:var(--muted)}
+code,kbd{font-family:var(--mono);font-size:.92em} pre{margin:12px 0 0;padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,.11);background:#050814;overflow:auto;color:#d9e7ff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)} .code-title{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-top:14px} .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:20px} table{border-collapse:collapse;width:100%;min-width:860px;background:rgba(255,255,255,.035)} th,td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top;text-align:left;font-size:14px} th{color:#fff;background:rgba(255,255,255,.06);font-size:12px;text-transform:uppercase;letter-spacing:.08em} td{color:var(--soft)}
+.diagram{position:relative;min-height:310px;margin-top:24px;border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 50% 50%,rgba(53,216,255,.08),transparent 52%),rgba(0,0,0,.18);overflow:hidden;padding:28px} .layer-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;position:relative;z-index:2} .node{min-height:116px;border:1px solid var(--line);border-radius:22px;background:rgba(10,18,36,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;transition:.35s} .node .ico{font-size:27px} .node b{font-size:15px;margin-top:8px} .node span{font-size:12px;color:var(--muted)} .node.active{border-color:var(--green);box-shadow:0 0 0 5px rgba(0,237,100,.08),0 0 34px rgba(0,237,100,.18);transform:translateY(-6px)} svg.arrows{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none} .path{fill:none;stroke:rgba(122,162,255,.45);stroke-width:2;stroke-dasharray:9 8} .packet{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan);z-index:4;left:0;top:0;opacity:0;transition:all .65s cubic-bezier(.2,.9,.2,1)} .packet.response{background:var(--green);box-shadow:0 0 22px var(--green)}
+.sim-controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0} button{border:0;border-radius:14px;padding:11px 15px;color:#06101d;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--green));cursor:pointer} button.secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)} button:hover{filter:brightness(1.08);transform:translateY(-1px)} .console{font-family:var(--mono);font-size:12px;line-height:1.65;color:#a7f3d0;background:#030712;border:1px solid rgba(0,237,100,.22);border-radius:18px;padding:14px;min-height:155px;max-height:300px;overflow:auto} .json-final{display:none} .json-final.show{display:block;animation:pop .35s ease} @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.timeline{position:relative;margin-top:16px} .step{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08)} .step .time{font-family:var(--mono);color:var(--cyan);font-size:12px} .step strong{display:block} .step p{margin:4px 0 0;color:var(--muted)}
+.test-lanes{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px} .lane{position:relative;border:1px solid var(--line);border-radius:24px;background:rgba(0,0,0,.17);padding:18px;min-height:455px;overflow:hidden} .lane h3{margin-top:0} .rail{display:flex;flex-direction:column;gap:10px;margin-top:16px} .rail-item{border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.055);display:flex;align-items:center;gap:10px;color:var(--soft);transition:.3s} .rail-item.active{border-color:var(--cyan);box-shadow:0 0 26px rgba(53,216,255,.15);transform:translateX(6px)} .rail-item.pass{border-color:rgba(0,237,100,.45);color:#dcfce7} .rail-item.fail{border-color:rgba(255,93,115,.6);color:#fecdd3} .rail-dot{width:10px;height:10px;border-radius:50%;background:var(--muted)} .rail-item.active .rail-dot{background:var(--cyan);box-shadow:0 0 14px var(--cyan)} .rail-item.pass .rail-dot{background:var(--green)} .rail-item.fail .rail-dot{background:var(--red)}
+.tree{font-family:var(--mono);font-size:13px;color:#dbeafe;white-space:pre;overflow:auto;line-height:1.55;background:#050814;border:1px solid var(--line);border-radius:22px;padding:18px} .callout{border-left:4px solid var(--cyan);background:rgba(53,216,255,.075);padding:14px 16px;border-radius:16px;margin:16px 0;color:var(--soft)} .callout.warn{border-left-color:var(--orange);background:rgba(255,184,107,.075)} .callout.bad{border-left-color:var(--red);background:rgba(255,93,115,.075)} .callout.good{border-left-color:var(--green);background:rgba(0,237,100,.075)} .reveal{opacity:0;transform:translateY(22px);transition:.65s ease} .reveal.visible{opacity:1;transform:none}
+@media (max-width:1050px){.layout{grid-template-columns:1fr} aside{position:relative;height:auto} .grid.cols-2,.grid.cols-3,.grid.cols-4,.test-lanes,.layer-row{grid-template-columns:1fr} .diagram{min-height:auto} svg.arrows,.packet{display:none} .hero{padding:30px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+  <div class="brand"><div class="logo"></div><div><h1>course-domain</h1><span>Final developer documentation</span></div></div>
+  <div class="search"><input id="search" placeholder="Search sections..." /></div>
+  <nav class="nav" id="nav">
+    <a href="#overview">Overview <small>01</small></a><a href="#architecture">Architecture <small>02</small></a><a href="#simulation">Request Simulation <small>03</small></a><a href="#api">API <small>04</small></a><a href="#testing">Testing <small>05</small></a><a href="#test-simulation">Test Simulation <small>06</small></a><a href="#commands">Commands <small>07</small></a><a href="#docker">Docker <small>08</small></a><a href="#cicd">CI/CD <small>09</small></a><a href="#vps">VPS <small>10</small></a><a href="#folders">Folders <small>11</small></a><a href="#recommendations">Improvements <small>12</small></a>
+  </nav>
+</aside>
+<main>
+<header class="hero reveal visible">
+  <div class="kicker"><span class="pulse"></span> Debesis LMS · Course Microservice</div>
+  <h2><span class="grad">Professional documentation</span><br/>for the course-domain backend.</h2>
+  <p>This document was generated after inspecting the uploaded repository, including <code>src/main/java</code>, <code>src/test/java</code>, fixtures, Docker, GitHub Actions, and the existing <code>course-domain-docs-v3.html</code> deployment reference. Secrets are intentionally masked in this documentation.</p>
+  <div class="chips"><span class="chip">Spring Boot 4.0.5</span><span class="chip">Java property: 25</span><span class="chip">MongoDB / Spring Data</span><span class="chip">MapStruct + Lombok</span><span class="chip">MockMvc + Mockito</span><span class="chip">WireMock present</span><span class="chip">Testcontainers present</span><span class="chip">Docker + VPS deploy</span></div>
+</header>
+
+<section class="section reveal" id="overview">
+  <h2>1. Application Overview</h2>
+  <p class="lead"><strong>course-domain</strong> is the course-management microservice for Debesis LMS. Its current implemented responsibility is creating a course document, validating the request, enforcing uniqueness rules, generating a URL-safe slug, saving the document into MongoDB, and returning a structured course response.</p>
+  <div class="grid cols-4">
+    <div class="card"><div class="metric">1</div><h4>Implemented REST endpoint</h4><p>The repository exposes one discovered API: <code>POST /api/v1/courses</code>.</p></div>
+    <div class="card"><div class="metric">3</div><h4>Uniqueness checks</h4><p><code>code</code>, <code>instructorId</code>, and <code>title</code> are checked case-insensitively before save.</p></div>
+    <div class="card"><div class="metric">Mongo</div><h4>Persistence model</h4><p><code>Course</code> is a MongoDB document stored in collection <code>course</code>.</p></div>
+    <div class="card"><div class="metric">CI/CD</div><h4>Deployment path</h4><p>GitHub Actions builds and pushes Docker images, then deploys to a DigitalOcean VPS via SSH.</p></div>
+  </div>
+  <div class="callout good"><strong>Where it fits:</strong> In the wider Debesis LMS architecture, this service owns course creation and course metadata. Other domains such as Auth, User, Enrollment, Assignment, Submission, Notification, and Analytics can consume or reference course records through this service rather than writing course data directly.</div>
+</section>
+
+<section class="section reveal" id="architecture">
+  <h2>2. System Architecture</h2>
+  <p class="lead">The implemented backend follows a clean Spring layering style: HTTP request enters a controller, business rules run in the service, persistence is delegated to a Spring Data repository, and MongoDB stores the final document.</p>
+  <div class="diagram">
+    <svg class="arrows" viewBox="0 0 1000 300" preserveAspectRatio="none"><path class="path" d="M105 120 C190 45, 230 45, 315 120"/><path class="path" d="M315 120 C400 45, 440 45, 525 120"/><path class="path" d="M525 120 C610 45, 650 45, 735 120"/><path class="path" d="M735 120 C820 45, 860 45, 945 120"/></svg>
+    <div class="layer-row">
+      <div class="node"><div class="ico">🧑‍💻</div><b>Client</b><span>Browser, Postman, frontend app</span></div>
+      <div class="node"><div class="ico">🎛️</div><b>Controller</b><span>CourseController</span></div>
+      <div class="node"><div class="ico">⚙️</div><b>Service</b><span>CourseServiceImpl</span></div>
+      <div class="node"><div class="ico">🧬</div><b>Repository</b><span>CourseRepository</span></div>
+      <div class="node"><div class="ico">🍃</div><b>MongoDB</b><span>course.course collection</span></div>
+    </div>
+  </div>
+  <div class="grid cols-3">
+    <div class="card"><h4>Controller layer</h4><p><code>CourseController</code> maps <code>/api/v1/courses</code> and accepts <code>@Valid @RequestBody CourseRequestDTO</code>.</p></div>
+    <div class="card"><h4>Service layer</h4><p><code>CourseServiceImpl</code> validates duplicates, maps DTO to entity, generates slug, timestamps, saves, then maps to response.</p></div>
+    <div class="card"><h4>Repository layer</h4><p><code>CourseRepository</code> extends <code>MongoRepository&lt;Course,String&gt;</code> and defines derived query methods.</p></div>
+  </div>
+</section>
+
+<section class="section reveal" id="simulation">
+  <h2>3. Full Request Execution Simulation</h2>
+  <p class="lead">Run this animation to see the request move from client to database, then the response packet travel back to the client before the final JSON appears.</p>
+  <div class="sim-controls"><button id="runReq">Run Simulation</button><button class="secondary" id="resetReq">Reset Simulation</button></div>
+  <div class="diagram" id="reqDiagram">
+    <div class="packet" id="reqPacket"></div><div class="packet response" id="resPacket"></div>
+    <div class="layer-row">
+      <div class="node sim-node" data-name="Client"><div class="ico">🧑‍💻</div><b>Client</b><span>POST JSON</span></div>
+      <div class="node sim-node" data-name="Controller"><div class="ico">🎛️</div><b>Controller</b><span>@PostMapping</span></div>
+      <div class="node sim-node" data-name="Service"><div class="ico">⚙️</div><b>Service</b><span>Validation + slug</span></div>
+      <div class="node sim-node" data-name="Repository"><div class="ico">🧬</div><b>Repository</b><span>save()</span></div>
+      <div class="node sim-node" data-name="MongoDB"><div class="ico">🍃</div><b>MongoDB</b><span>insert document</span></div>
+    </div>
+  </div>
+  <div class="grid cols-2" style="margin-top:18px"><div><h3>Console trace</h3><div class="console" id="reqConsole">$ ready — click Run Simulation</div></div><div><h3>Final response</h3><pre class="json-final" id="finalJson">{
+  "id": "generated-by-mongodb",
+  "code": "SB101",
+  "title": "Spring Boot Fundamentals",
+  "slug": "spring-boot-fundamentals",
+  "description": "Build a REST API with Spring Boot",
+  "instructorId": "TM1234",
+  "level": "beginner",
+  "languageCode": "en",
+  "thumbnailUrl": "https://example.com/spring.png",
+  "durationHours": 12,
+  "createdAt": "generated-by-application",
+  "updatedAt": "generated-by-application"
+}</pre></div></div>
+</section>
+
+<section class="section reveal" id="api">
+  <h2>4. API Documentation</h2>
+  <p class="lead">The project currently contains one REST controller and one discovered endpoint. There are no GET, PUT, PATCH, or DELETE endpoints in the uploaded source.</p>
+  <div class="table-wrap"><table><thead><tr><th>Method</th><th>URL</th><th>Purpose</th><th>Controller → Service → Repository</th></tr></thead><tbody><tr><td><span class="badge ok">POST</span></td><td><code>/api/v1/courses</code></td><td>Create a course, validate required fields, generate slug, persist MongoDB document, return created DTO.</td><td><code>CourseController.createCourse</code> → <code>CourseServiceImpl.createCourse</code> → <code>CourseRepository.existsBy...</code> + <code>save</code></td></tr></tbody></table></div>
+  <h3>Request body example</h3><pre>{
+  &quot;code&quot;: &quot;SB101&quot;,
+  &quot;title&quot;: &quot;Spring Boot Fundamentals&quot;,
+  &quot;description&quot;: &quot;Build a REST API with Spring Boot&quot;,
+  &quot;instructorId&quot;: &quot;TM1234&quot;,
+  &quot;level&quot;: &quot;beginner&quot;,
+  &quot;languageCode&quot;: &quot;en&quot;,
+  &quot;thumbnailUrl&quot;: &quot;https://example.com/spring.png&quot;,
+  &quot;durationHours&quot;: 12
+}
+</pre>
+  <h3>Success response example — 201 Created</h3><pre>{
+  &quot;id&quot;: &quot;generated-by-mongodb&quot;,
+  &quot;code&quot;: &quot;SB101&quot;,
+  &quot;title&quot;: &quot;Spring Boot Fundamentals&quot;,
+  &quot;slug&quot;: &quot;spring-boot-fundamentals&quot;,
+  &quot;description&quot;: &quot;Build a REST API with Spring Boot&quot;,
+  &quot;instructorId&quot;: &quot;TM1234&quot;,
+  &quot;level&quot;: &quot;beginner&quot;,
+  &quot;languageCode&quot;: &quot;en&quot;,
+  &quot;thumbnailUrl&quot;: &quot;https://example.com/spring.png&quot;,
+  &quot;durationHours&quot;: 12,
+  &quot;createdAt&quot;: &quot;generated-by-application&quot;,
+  &quot;updatedAt&quot;: &quot;generated-by-application&quot;
+}
+</pre>
+  <h3>Error response examples</h3>
+  <div class="grid cols-2"><div class="card"><h4>400 Bad Request — validation failure</h4><p>Triggered when <code>@NotBlank</code>, <code>@Size</code>, <code>@Pattern</code>, or <code>@PositiveOrZero</code> constraints fail. The test fixture expects at least <code>status: 400</code> and path <code>/api/v1/courses</code>.</p><pre>{
+  "status": 400,
+  "path": "/api/v1/courses"
+}</pre></div><div class="card"><h4>409 Conflict — duplicate field</h4><p>Handled by <code>GlobalExceptionHandler</code> for <code>DuplicateCourseFieldException</code>.</p><pre>{
+  "timestamp": "2026-04-28T...Z",
+  "status": 409,
+  "error": "Conflict",
+  "message": "Course code already exists: SB101",
+  "path": "/api/v1/courses"
+}</pre></div></div>
+  <div class="code-title">CourseRequestDTO validation rules</div><pre>code: @NotBlank, @Size(max = 50)
+title: @NotBlank, @Size(max = 150)
+description: @Size(max = 5000)
+instructorId: @NotBlank, @Pattern(&quot;^[A-Z]{2}\d{4}$&quot;) e.g. TM1234
+level: @Size(max = 50)
+languageCode: @Size(max = 10)
+thumbnailUrl: @Size(max = 500)
+durationHours: @PositiveOrZero</pre>
+  <details><summary>Open controller source</summary><pre>package com.course_domain.course_domain.controller;
+
+import com.course_domain.course_domain.dto.request.CourseRequestDTO;
+import com.course_domain.course_domain.dto.response.CourseResponseDTO;
+import com.course_domain.course_domain.service.CourseService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping(&quot;/api/v1/courses&quot;)
+public class CourseController {
+    private final CourseService courseService;
+
+    @PostMapping
+    public ResponseEntity&lt;CourseResponseDTO&gt; createCourse(@Valid @RequestBody CourseRequestDTO courseRequestDTO) {
+        CourseResponseDTO createdCourse = courseService.createCourse(courseRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
+    }
+}
+</pre></details>
+  <details><summary>Open service source</summary><pre>package com.course_domain.course_domain.service.impl;
+
+import com.course_domain.course_domain.dto.request.CourseRequestDTO;
+import com.course_domain.course_domain.dto.response.CourseResponseDTO;
+import com.course_domain.course_domain.exception.DuplicateCourseFieldException;
+import com.course_domain.course_domain.mapper.CourseConverter;
+import com.course_domain.course_domain.mapper.CourseMapper;
+import com.course_domain.course_domain.model.Course;
+import com.course_domain.course_domain.repository.CourseRepository;
+import com.course_domain.course_domain.service.CourseService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Locale;
+
+@Service
+@AllArgsConstructor
+@Slf4j
+public class CourseServiceImpl implements CourseService {
+
+    private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
+    private final CourseConverter courseConverter;
+
+    @Override
+    public CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO) {
+        validateUniqueCourseFields(courseRequestDTO);
+
+        Course course = courseConverter.toEntity(courseRequestDTO);
+        Instant now = Instant.now();
+        course.setSlug(toSlug(courseRequestDTO.getTitle()));
+        course.setCreatedAt(now);
+        course.setUpdatedAt(now);
+
+        Course savedCourse = courseRepository.save(course);
+        return courseMapper.toResponseDTO(savedCourse);
+    }
+
+    private void validateUniqueCourseFields(CourseRequestDTO courseRequestDTO) {
+        if (courseRepository.existsByCodeIgnoreCase(courseRequestDTO.getCode())) {
+            log.warn(&quot;Course code already exists: {}&quot;, courseRequestDTO.getCode());
+            throw new DuplicateCourseFieldException(&quot;code&quot;, courseRequestDTO.getCode());
+        }
+
+        if (courseRepository.existsByInstructorIdIgnoreCase(courseRequestDTO.getInstructorId())) {
+            log.warn(&quot;Course instructorId already exists: {}&quot;, courseRequestDTO.getInstructorId());
+            throw new DuplicateCourseFieldException(&quot;instructorId&quot;, courseRequestDTO.getInstructorId());
+        }
+
+        if (courseRepository.existsByTitleIgnoreCase(courseRequestDTO.getTitle())) {
+            log.warn(&quot;Course title already exists: {}&quot;, courseRequestDTO.getTitle());
+            throw new DuplicateCourseFieldException(&quot;title&quot;, courseRequestDTO.getTitle());
+        }
+    }
+
+    private String toSlug(String value) {
+        return value.toLowerCase(Locale.ROOT)
+                .replaceAll(&quot;[^a-z0-9]+&quot;, &quot;-&quot;)
+                .replaceAll(&quot;(^-|-$)&quot;, &quot;&quot;);
+    }
+}
+</pre></details>
+</section>
+
+<section class="section reveal" id="testing">
+  <h2>5. Testing Documentation</h2>
+  <p class="lead">The repository separates fast unit tests from full Spring integration tests. It also includes reusable JSON fixtures and helper classes so tests do not hardcode large JSON strings.</p>
+  <div class="grid cols-3"><div class="card"><h4>Unit tests</h4><p>Located in <code>src/test/java/.../unittests/coursedomain</code>. They instantiate classes directly and use Mockito mocks for dependencies.</p><ul><li><code>CourseControllerUnitTest</code></li><li><code>CourseServiceUnitTest</code></li><li><code>CourseRepositoryUnitTest</code></li></ul></div><div class="card"><h4>Integration tests</h4><p><code>CourseControllerIntegrationTest</code> extends <code>BaseIntegrationTest</code>, starts a Spring context, configures MockMvc, and verifies real Mongo persistence behavior.</p></div><div class="card"><h4>Fixtures & support</h4><p>JSON files live under <code>src/test/resources/fixtures/course-domain</code>. <code>JsonFixtureLoader</code> reads them from the classpath. <code>TestDataFactory</code> creates reusable Course test data.</p></div></div>
+  <h3>BaseIntegrationTest behavior</h3><pre>package com.course_domain.course_domain.integrationtests.coursedomain.support;
+
+import com.course_domain.course_domain.integrationtests.coursedomain.config.WireMockTestConfig;
+import com.course_domain.course_domain.repository.CourseRepository;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mongodb.MongoDBContainer;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles(&quot;test&quot;)
+@Import(WireMockTestConfig.class)
+@Testcontainers
+public abstract class BaseIntegrationTest {
+
+    @Container
+    static MongoDBContainer mongo =
+            new MongoDBContainer(&quot;mongo:7.0&quot;);
+
+    @DynamicPropertySource
+    static void mongoProperties(DynamicPropertyRegistry registry) {
+        registry.add(&quot;spring.data.mongodb.uri&quot;, mongo::getReplicaSetUrl);
+    }
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected CourseRepository courseRepository;
+
+    @Autowired
+    protected WireMockServer wireMockServer;
+
+    @BeforeEach
+    void resetIntegrationTestState() {
+        courseRepository.deleteAll();
+        WireMockStubs.reset(wireMockServer);
+    }
+}
+</pre>
+  <div class="callout good"><strong>Important actual finding:</strong> This project already includes Testcontainers MongoDB in <code>BaseIntegrationTest</code>. That means integration tests should use a temporary MongoDB container when Docker is available, instead of depending on a manually started MongoDB on <code>127.0.0.1:27017</code>.</div>
+  <div class="callout warn"><strong>Why people still see <code>Connection refused 127.0.0.1:27017</code>:</strong> the test properties file still contains a localhost Mongo URI, and the main application properties also use Mongo connection strings. If Testcontainers does not start, Docker is not running, the dynamic property key is wrong, or a test starts the app outside the testcontainer base class, Spring may try localhost and fail.</div>
+  <h3>WireMock</h3><p class="muted">WireMock is present through <code>WireMockTestConfig</code> and <code>WireMockStubs</code>. It starts a dynamic-port WireMock server and includes a sample <code>/health</code> stub. In the current course creation tests, WireMock is infrastructure-ready but not central to the asserted course API behavior.</p>
+</section>
+
+<section class="section reveal" id="test-simulation">
+  <h2>6. Animated Test Execution Simulation</h2>
+  <p class="lead">This simulation separates the fast unit-test path from the full integration-test path. It also shows the failure point when MongoDB is expected at localhost but is unavailable.</p>
+  <div class="sim-controls"><button id="runTests">Run Test Simulation</button><button class="secondary" id="failTests">Show Mongo Failure</button><button class="secondary" id="resetTests">Reset</button></div>
+  <div class="test-lanes">
+    <div class="lane"><h3>Unit test lane</h3><p class="muted">No Spring server. No real database. Dependencies are mocked.</p><div class="rail" id="unitRail"><div class="rail-item"><span class="rail-dot"></span>Maven Test Command</div><div class="rail-item"><span class="rail-dot"></span>Surefire discovers *UnitTest</div><div class="rail-item"><span class="rail-dot"></span>Instantiate controller/service directly</div><div class="rail-item"><span class="rail-dot"></span>Mockito mocked dependencies</div><div class="rail-item"><span class="rail-dot"></span>AssertJ / Mockito assertions</div><div class="rail-item"><span class="rail-dot"></span>Result: PASS</div></div></div>
+    <div class="lane"><h3>Integration test lane</h3><p class="muted">Spring context + MockMvc + real repository + MongoDB container or localhost Mongo.</p><div class="rail" id="intRail"><div class="rail-item"><span class="rail-dot"></span>Maven Test Command</div><div class="rail-item"><span class="rail-dot"></span>SpringBootTest context</div><div class="rail-item"><span class="rail-dot"></span>MockMvc POST /api/v1/courses</div><div class="rail-item"><span class="rail-dot"></span>Controller → Service → Repository</div><div class="rail-item"><span class="rail-dot"></span>MongoDB persistence</div><div class="rail-item"><span class="rail-dot"></span>Assertions + Result</div></div></div>
+  </div>
+  <h3>Console</h3><div class="console" id="testConsole">$ ready — run the test simulation</div>
+</section>
+
+<section class="section reveal" id="commands">
+  <h2>7. Testing Commands Section</h2>
+  <div class="grid cols-2"><div class="card"><h4>Inspect Compose services</h4><pre>docker compose config --services</pre><p>Use this before starting containers to confirm service names such as <code>mongodb</code> and <code>course-domain</code>.</p></div><div class="card"><h4>Start only MongoDB locally</h4><pre>docker compose up -d mongodb</pre><p>Useful when running the app locally but wanting MongoDB inside Docker. With Testcontainers, integration tests create their own Mongo container, but this command is still useful for manual app testing.</p></div><div class="card"><h4>Run all tests</h4><pre>mvn clean test</pre><p>Runs unit and integration tests discovered by Maven Surefire.</p></div><div class="card"><h4>Run unit tests only</h4><pre>mvn -Dtest=*UnitTest test</pre><p>Fast path for controller/service/repository unit tests using direct construction and Mockito.</p></div><div class="card"><h4>Run integration tests only</h4><pre>mvn -Dtest=*IntegrationTest test</pre><p>Runs SpringBootTest + MockMvc integration tests. Docker must be running for Testcontainers.</p></div><div class="card"><h4>IntelliJ note</h4><p>Right-clicking <code>CourseDomainApplication</code> runs the application main method. It does not run tests. To run tests, right-click a test class, a test method, the <code>src/test/java</code> folder, or use Maven → Lifecycle → test.</p></div></div>
+</section>
+
+<section class="section reveal" id="docker">
+  <h2>8. Docker Documentation</h2>
+  <p class="lead">The project includes a multi-stage Dockerfile and a Compose file with two services: MongoDB and the Spring Boot app.</p>
+  <div class="grid cols-2"><div><h3>Dockerfile explained</h3><pre># ── Stage 1: Build ──────────────────────────────────────
+# Uses a full Maven + JDK image just to compile
+FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+
+WORKDIR /app
+
+# Copy pom.xml first — Docker caches this layer
+# so dependencies are only re-downloaded when pom.xml changes
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+
+# Copy source and build
+COPY src ./src
+RUN mvn clean package -DskipTests -q
+
+# ── Stage 2: Runtime ────────────────────────────────────
+# Throws away Maven and JDK — only keeps the JAR
+# Alpine = tiny Linux (~5MB base), eclipse-temurin = official Java
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+# Create a non-root user — security best practice
+RUN addgroup -S spring &amp;&amp; adduser -S spring -G spring
+USER spring
+
+# Copy only the JAR from the builder stage
+COPY --from=builder /app/target/course-domain-0.0.1-SNAPSHOT.jar app.jar
+
+# Document that the app listens on 8080
+EXPOSE 8080
+
+# Start the app
+ENTRYPOINT [&quot;java&quot;, &quot;-jar&quot;, &quot;app.jar&quot;]</pre></div><div><h3>docker-compose.yml explained</h3><pre>version: &#x27;3.8&#x27;
+
+services:
+
+  # ── MongoDB ──────────────────────────────────────────
+  mongodb:
+    image: mongo:8.0
+    container_name: course-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ********
+      MONGO_INITDB_DATABASE: course
+    volumes:
+      - mongo_data:/data/db    # data persists across container restarts
+    ports:
+      - &quot;127.0.0.1:27017:27017&quot;  # only accessible from localhost — not public
+
+  # ── Spring Boot App ───────────────────────────────────
+  course-domain:
+    build: .                   # builds from your Dockerfile
+    image: course-domain:latest
+    container_name: course-domain
+    restart: always
+    ports:
+      - &quot;8080:8080&quot;
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:********@mongodb:27017/course?authSource=admin
+      # Notice: uses &quot;mongodb&quot; (service name) not &quot;localhost&quot;
+      # Docker networking lets containers find each other by service name
+    depends_on:
+      - mongodb                # waits for MongoDB to start first
+
+volumes:
+  mongo_data:                  # named volume — survives container restarts</pre></div></div>
+  <div class="grid cols-3"><div class="card"><h4>MongoDB service</h4><p>Runs <code>mongo:8.0</code>, creates the initial database, persists data to <code>mongo_data</code>, and maps port <code>127.0.0.1:27017:27017</code> so only the host machine can reach MongoDB from outside Docker.</p></div><div class="card"><h4>course-domain service</h4><p>Builds the Spring image from the Dockerfile and exposes the app on <code>8080:8080</code>. It receives MongoDB configuration through <code>SPRING_DATA_MONGODB_URI</code>.</p></div><div class="card"><h4>Why hostname is mongodb</h4><p>Inside a Docker Compose network, containers resolve each other by service name. The app must use <code>mongodb:27017</code>, not <code>localhost:27017</code>, because localhost inside the app container means the app container itself.</p></div></div>
+  <div class="callout warn"><strong>Port mapping detail:</strong> <code>127.0.0.1:27017:27017</code> is useful for <strong>local Docker testing</strong> because your IDE, MongoDB Compass, or local app can reach the MongoDB container through localhost while still avoiding public exposure. For the <strong>VPS production compose file</strong>, this mapping was removed because the Spring container talks to MongoDB internally through the Docker service name <code>mongodb</code>.</div><div class="callout bad"><strong>Real VPS issue fixed:</strong> deployment failed with <code>failed to bind host port 127.0.0.1:27017/tcp: address already in use</code>. The VPS already had a host MongoDB service listening on port <code>27017</code>, so Docker could not bind the same port for the MongoDB container. The solution was to remove the MongoDB <code>ports</code> block from the VPS compose file. MongoDB remains private, and the app still connects through <code>mongodb:27017</code> inside the Compose network.</div>
+</section>
+
+<section class="section reveal" id="cicd">
+  <h2>9. CI/CD Documentation</h2>
+  <p class="lead">The workflow in <code>.github/workflows/deploy.yml</code> runs on pushes and pull requests targeting <code>main</code>. Pushes to main build and push Docker images, then deploy to the VPS through SSH.</p>
+  <div class="timeline"><div class="step"><div class="time">Trigger</div><div><strong>push / pull_request on main</strong><p>Pull requests run CI checks. Pushes to main continue into Docker push and VPS deployment.</p></div></div><div class="step"><div class="time">Checkout</div><div><strong>actions/checkout@v4</strong><p>Downloads the repository onto the GitHub-hosted Ubuntu runner.</p></div></div><div class="step"><div class="time">Java setup</div><div><strong>actions/setup-java@v4</strong><p>Installs Temurin Java 25 and enables Maven cache, matching the project compiler release and Docker builder image.</p></div></div><div class="step"><div class="time">Test</div><div><strong><code>mvn test</code></strong><p>Runs Maven tests. If tests fail, the deploy job should not run.</p></div></div><div class="step"><div class="time">Docker</div><div><strong>Login, build, push</strong><p>Uses Docker Hub secrets, builds an image, and pushes both <code>latest</code> and commit-SHA tags.</p></div></div><div class="step"><div class="time">Deploy</div><div><strong>appleboy/ssh-action</strong><p>SSH connects to the VPS, enters <code>/opt/course-domain</code>, pulls new images, runs <code>docker compose up -d</code>, and prunes old images.</p></div></div></div>
+  <h3>Secrets needed</h3><div class="chips"><span class="chip">DOCKER_USERNAME</span><span class="chip">DOCKER_PASSWORD</span><span class="chip">VPS_HOST</span><span class="chip">VPS_USER</span><span class="chip">VPS_SSH_KEY</span></div>
+  <div class="callout good"><strong>Java 25 alignment:</strong> the workflow now installs Temurin Java 25, matching the project compiler release and the Java 25 Docker builder/runtime images. Keep IntelliJ, Maven, GitHub Actions, Docker, and any direct VPS Java runtime on the same Java version to avoid <code>release version 25 not supported</code>.</div>
+  <details><summary>Open workflow source</summary><pre>name: CI/CD — Docker Build &amp; Deploy
+
+# ── WHEN does this run? ──────────────────────────────────
+on:
+  push:
+    branches: [ main ]       # every push to main → full CI + CD
+  pull_request:
+    branches: [ main ]       # every PR → CI only (no deploy)
+
+jobs:
+
+  # ══════════════════════════════════════════════════════
+  # JOB 1 — CI: compile, test, build image, push to Hub
+  # ══════════════════════════════════════════════════════
+  build:
+    name: Build &amp; Push Image
+    runs-on: ubuntu-latest   # GitHub spins up a fresh Ubuntu VM for this
+
+    steps:
+
+      # 1. Download your code onto the GitHub runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Install Java 25 on the runner
+      #    cache: maven → caches ~/.m2 so dependencies
+      #    aren&#x27;t re-downloaded on every run (saves ~1 min)
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: &#x27;25&#x27;
+          distribution: &#x27;temurin&#x27;
+          cache: maven
+
+      # 3. Run your tests
+      #    If any test fails → this step fails → pipeline stops
+      #    → deploy job never runs → server is safe
+      - name: Run tests
+        run: mvn test
+        # ↑ change to: mvn test   once you have real tests
+
+      # 4. Only log into Docker Hub on pushes to main
+      #    No point logging in for PR checks
+      - name: Log in to Docker Hub
+        if: github.ref == &#x27;refs/heads/main&#x27;
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # from GitHub secrets
+          password: ${{ secrets.DOCKER_PASSWORD }}  # your Docker Hub token
+
+      # 5. Build the Docker image using your Dockerfile
+      #    and push it to Docker Hub with two tags:
+      #    - debesis/course-domain:latest     (always newest)
+      #    - debesis/course-domain:a1b2c3...  (this specific commit)
+      - name: Build &amp; Push Docker image
+        if: github.ref == &#x27;refs/heads/main&#x27;
+        uses: docker/build-push-action@v5
+        with:
+          context: .          # use Dockerfile in project root
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/course-domain:latest
+            ${{ secrets.DOCKER_USERNAME }}/course-domain:${{ github.sha }}
+
+  # ══════════════════════════════════════════════════════
+  # JOB 2 — CD: pull new image on VPS, restart container
+  # ══════════════════════════════════════════════════════
+  deploy:
+    name: Deploy to DigitalOcean
+    runs-on: ubuntu-latest
+    needs: build             # waits for JOB 1 to finish successfully
+    if: github.ref == &#x27;refs/heads/main&#x27; &amp;&amp; github.event_name == &#x27;push&#x27;
+    # ↑ only deploys on actual pushes to main, not PRs
+
+    steps:
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}      # 165.245.223.137
+          username: ${{ secrets.VPS_USER }}  # root
+          key: ${{ secrets.VPS_SSH_KEY }}    # your private SSH key
+          script: |
+
+            # Go to where docker-compose.yml lives on the VPS
+            cd /opt/course-domain
+
+            # Pull the new image from Docker Hub
+            # (only downloads changed layers — fast after first run)
+            docker compose pull
+
+            # Restart containers with new image
+            # -d = detached (runs in background)
+            # Only recreates containers whose image changed
+            docker compose up -d
+
+            # Delete old/unused images to save disk space
+            # Your 10GB droplet will fill up otherwise
+            docker image prune -f
+
+            # Print confirmation with the image name now running
+            echo &quot;✅ Deployed $(docker ps --format &#x27;{{.Image}}&#x27; --filter name=course-domain)&quot;</pre></details>
+</section>
+
+<section class="section reveal" id="vps">
+  <h2>10. VPS / Deployment-Level Explanation</h2>
+  <p class="lead">Using the existing <code>course-domain-docs-v3.html</code> as the deployment reference, the VPS is the production host where Docker Compose starts MongoDB and the course-domain container. GitHub Actions does not run the app itself; it remotely tells the VPS to pull and restart the deployed containers.</p>
+  <div class="diagram"><svg class="arrows" viewBox="0 0 1000 300" preserveAspectRatio="none"><path class="path" d="M90 150 C230 20, 330 20, 470 150"/><path class="path" d="M520 150 C650 40, 760 40, 910 150"/></svg><div class="layer-row" style="grid-template-columns:repeat(4,1fr)"><div class="node"><div class="ico">🌐</div><b>GitHub Actions</b><span>runner builds + SSH</span></div><div class="node"><div class="ico">🔐</div><b>VPS SSH</b><span>receives deploy commands</span></div><div class="node"><div class="ico">🐳</div><b>Docker Compose</b><span>pull + up -d</span></div><div class="node"><div class="ico">☕🍃</div><b>Runtime</b><span>app :8080 + MongoDB private</span></div></div></div>
+  <div class="grid cols-2"><div class="card"><h4>What happens after deployment</h4><ol><li>GitHub Actions connects to the VPS through SSH.</li><li>The VPS receives shell commands in <code>/opt/course-domain</code>.</li><li>Docker Compose pulls the new image or rebuilds depending on compose setup.</li><li><code>docker compose up -d</code> starts/recreates changed containers.</li><li>MongoDB runs as <code>course-mongodb</code>; the app runs as <code>course-domain</code>.</li><li>The app reaches MongoDB through the Docker service name <code>mongodb</code>.</li><li>The app is exposed on port <code>8080</code>; MongoDB should remain private.</li></ol></div><div class="card"><h4>Runtime concepts</h4><p><strong>Environment variables</strong> are injected when the container starts, not when Java code is written. <strong>Docker volumes</strong> preserve MongoDB data after container restarts. <strong>restart: always</strong> helps services come back after crashes or VPS reboot. <strong>Docker networks</strong> let containers talk using service names.</p></div></div>
+  <h3>VPS Docker installation commands used</h3>
+  <p class="lead">The deploy job first failed with <code>docker: command not found</code>. That did not crash the server; it only meant Docker Engine and the Docker Compose plugin were missing from the VPS. These commands prepared the server for Docker-based deployment.</p>
+  <pre>apt-get update -y
+apt-get install -y ca-certificates curl gnupg
+install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+  &gt; /etc/apt/sources.list.d/docker.list
+
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+systemctl start docker
+systemctl enable docker
+
+docker --version
+docker compose version
+docker ps</pre>
+  <div class="callout good"><strong>Result:</strong> after Docker was installed, the GitHub Actions deploy job could SSH into the VPS and execute <code>docker compose pull</code>, <code>docker compose up -d</code>, and <code>docker image prune -f</code>.</div>
+  <h3>VPS compose file after the port fix</h3>
+  <p>For local development, the repository compose file can use <code>build: .</code> and expose MongoDB to <code>127.0.0.1:27017</code>. For VPS production, the compose file should pull the published Docker Hub image and keep MongoDB private inside Docker networking.</p>
+  <pre>version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: course-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ********
+      MONGO_INITDB_DATABASE: course
+    volumes:
+      - mongo_data:/data/db
+
+  course-domain:
+    image: alphadevug/course-domain:latest
+    container_name: course-domain
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:********@mongodb:27017/course?authSource=admin
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:</pre>
+  <div class="callout bad"><strong>Port problem and solution:</strong> the original MongoDB config used <code>ports: ["127.0.0.1:27017:27017"]</code>. The VPS already had MongoDB installed directly on the host, so port <code>27017</code> was occupied. Docker then failed with <code>address already in use</code>. Removing the MongoDB port mapping fixed the deployment. The app still connects through <code>mongodb:27017</code> because both services share the same Compose network.</div>
+  <h3>Docker Hub and deployment commands used</h3>
+  <pre>docker login
+
+cd /opt/course-domain
+docker compose pull
+docker compose up -d
+docker compose ps
+
+docker logs course-domain
+docker logs course-mongodb</pre>
+  <h3>Useful VPS commands</h3><pre>docker ps
+docker compose ps
+docker logs course-domain
+docker logs course-mongodb
+docker compose pull
+docker compose up -d
+docker compose down
+docker compose restart course-domain</pre>
+  <h3>Environment differences</h3><div class="table-wrap"><table><thead><tr><th>Environment</th><th>What runs</th><th>MongoDB address</th><th>Purpose</th></tr></thead><tbody><tr><td>Local development</td><td>Spring Boot from IntelliJ/Maven</td><td><code>localhost</code> or configured remote URI</td><td>Manual development and debugging.</td></tr><tr><td>Local Docker testing</td><td>App container + Mongo container</td><td><code>mongodb:27017</code> inside Docker, <code>127.0.0.1:27017</code> from host</td><td>Test production-like container networking.</td></tr><tr><td>CI/CD runner</td><td>Temporary Ubuntu runner</td><td>Testcontainers MongoDB when Docker is available</td><td>Build, test, image push.</td></tr><tr><td>VPS production</td><td>Long-running Docker Compose services</td><td><code>mongodb:27017</code> inside Compose network</td><td>Serve deployed backend on port 8080.</td></tr></tbody></table></div>
+</section>
+
+<section class="section reveal" id="folders">
+  <h2>11. Folder Structure Explanation</h2>
+  <div class="tree">./.dockerignore
+./.gitattributes
+./.github/workflows/deploy.yml
+./.gitignore
+./.mvn/wrapper/maven-wrapper.properties
+./Dockerfile
+./HELP.md
+./course-domain-docs-v2.html
+./course-domain-docs-v3.html
+./docker-compose.yml
+./mvnw
+./mvnw.cmd
+./pom.xml
+./src/main/java/com/course_domain/course_domain/CourseDomainApplication.java
+./src/main/java/com/course_domain/course_domain/controller/CourseController.java
+./src/main/java/com/course_domain/course_domain/dto/request/CourseRequestDTO.java
+./src/main/java/com/course_domain/course_domain/dto/response/ApiErrorResponse.java
+./src/main/java/com/course_domain/course_domain/dto/response/CourseResponseDTO.java
+./src/main/java/com/course_domain/course_domain/exception/DuplicateCourseFieldException.java
+./src/main/java/com/course_domain/course_domain/exception/GlobalExceptionHandler.java
+./src/main/java/com/course_domain/course_domain/mapper/CourseConverter.java
+./src/main/java/com/course_domain/course_domain/mapper/CourseMapper.java
+./src/main/java/com/course_domain/course_domain/model/Course.java
+./src/main/java/com/course_domain/course_domain/repository/CourseRepository.java
+./src/main/java/com/course_domain/course_domain/service/CourseService.java
+./src/main/java/com/course_domain/course_domain/service/impl/CourseServiceImpl.java
+./src/main/resources/application.properties
+./src/main/resources/db/manual/001_alter_course_instructor_id_to_varchar.sql
+./src/main/resources/db/manual/002_add_course_unique_constraints.sql
+./src/test/java/com/course_domain/course_domain/integrationtests/coursedomain/config/WireMockTestConfig.java
+./src/test/java/com/course_domain/course_domain/integrationtests/coursedomain/controller/CourseControllerIntegrationTest.java
+./src/test/java/com/course_domain/course_domain/integrationtests/coursedomain/support/BaseIntegrationTest.java
+./src/test/java/com/course_domain/course_domain/integrationtests/coursedomain/support/WireMockStubs.java
+./src/test/java/com/course_domain/course_domain/support/JsonFixtureLoader.java
+./src/test/java/com/course_domain/course_domain/support/TestDataFactory.java
+./src/test/java/com/course_domain/course_domain/unittests/coursedomain/controller/CourseControllerUnitTest.java
+./src/test/java/com/course_domain/course_domain/unittests/coursedomain/repository/CourseRepositoryUnitTest.java
+./src/test/java/com/course_domain/course_domain/unittests/coursedomain/service/CourseServiceUnitTest.java
+./src/test/resources/application-test.properties
+./src/test/resources/fixtures/course-domain/requests/create-course-invalid.json
+./src/test/resources/fixtures/course-domain/requests/create-course-missing-title.json
+./src/test/resources/fixtures/course-domain/requests/create-course-valid.json
+./src/test/resources/fixtures/course-domain/responses/create-course-201-ok.json
+./src/test/resources/fixtures/course-domain/responses/create-course-400-validation-error.json
+</div>
+  <div class="grid cols-2"><div class="card"><h4>Main source</h4><p><code>src/main/java</code> contains the Spring Boot application, controller, DTOs, exception handling, MapStruct mappers, MongoDB document, repository, and service implementation.</p></div><div class="card"><h4>Test source</h4><p><code>src/test/java</code> is split into <code>unittests/coursedomain</code>, <code>integrationtests/coursedomain</code>, and shared <code>support</code> helpers.</p></div><div class="card"><h4>Fixtures</h4><p><code>src/test/resources/fixtures/course-domain</code> stores reusable request and response JSON for tests.</p></div><div class="card"><h4>Deployment files</h4><p><code>Dockerfile</code>, <code>docker-compose.yml</code>, and <code>.github/workflows/deploy.yml</code> define build, runtime, and VPS deployment behavior.</p></div><div class="card"><h4>Manual DB scripts</h4><p><code>src/main/resources/db/manual</code> contains earlier SQL migration files. They look like PostgreSQL-era artifacts and are not used by the current MongoDB document model.</p></div><div class="card"><h4>Documentation files</h4><p><code>course-domain-docs-v2.html</code> and <code>course-domain-docs-v3.html</code> are existing HTML docs. V3 is especially useful for understanding VPS/deployment context.</p></div></div>
+</section>
+
+<section class="section reveal" id="recommendations">
+  <h2>12. Problems Found / Professional Improvements</h2>
+  <div class="grid cols-2"><div class="card"><span class="badge bad">Security</span><h4>Remove hardcoded secrets</h4><p>MongoDB credentials appear in application and Compose configuration. Move them to environment variables or GitHub/VPS secrets and never commit real passwords.</p></div><div class="card"><span class="badge bad">Build risk</span><h4>Align Java versions</h4><p>The project is intentionally using Java 25. Keep the POM, local IntelliJ SDK, GitHub Actions setup-java step, Docker builder image, Docker runtime image, and any direct VPS Java runtime aligned to Java 25.</p></div><div class="card"><span class="badge warn">CI quality</span><h4>Do not skip tests in CI/CD</h4><p>The workflow uses <code>mvn test</code>, which is good. The Dockerfile uses <code>-DskipTests</code>; that can be acceptable only if CI already passed tests before image build. Avoid skipping tests in the actual CI quality gate.</p></div><div class="card"><span class="badge ok">Testing</span><h4>Keep Testcontainers as the default</h4><p>The project already uses Testcontainers. Keep expanding that approach so integration tests are stable locally and in CI without relying on a pre-installed MongoDB.</p></div><div class="card"><span class="badge warn">API maturity</span><h4>Add Swagger/OpenAPI</h4><p>Expose API docs at a route such as <code>/swagger-ui</code> or <code>/v3/api-docs</code> for frontend and QA teams.</p></div><div class="card"><span class="badge ok">Reliability</span><h4>Add health checks</h4><p>Add Spring Boot Actuator or custom <code>/health</code> endpoint so Docker, CI, and VPS checks can verify app and MongoDB readiness.</p></div><div class="card"><span class="badge warn">Profiles</span><h4>Separate dev/test/prod profiles</h4><p>Use <code>application-dev.properties</code>, <code>application-test.properties</code>, and production environment variables to avoid accidental remote DB usage.</p></div><div class="card"><span class="badge warn">Deployment</span><h4>Add rollback strategy</h4><p>Keep commit-SHA image tags, record the previously running image, and add a rollback command or blue/green style deployment plan.</p></div><div class="card"><span class="badge ok">Observability</span><h4>Improve logs/monitoring</h4><p>Use structured logs, container log rotation, uptime monitoring, and alerts for VPS disk, memory, and MongoDB failures.</p></div><div class="card"><span class="badge ok">Coverage</span><h4>Expand endpoint coverage</h4><p>Add read/update/delete/list endpoints as the course domain matures, then test success, validation, duplicate, and persistence scenarios for each.</p></div></div>
+  <div class="callout good"><strong>Strong foundation:</strong> The code already has controller/service/repository separation, validation, global conflict handling, DTOs, MapStruct, Mongo auditing, unit tests, integration tests, fixtures, WireMock infrastructure, Testcontainers infrastructure, Docker, and CI/CD.</div>
+</section>
+
+<footer class="section reveal"><p class="muted">Generated for <strong>course-domain</strong> after repository inspection. Open this file directly in a browser; it contains all CSS and JavaScript inline and does not require external CDNs.</p></footer>
+</main></div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const reveal=()=>$$('.reveal').forEach(el=>{if(el.getBoundingClientRect().top<innerHeight-80)el.classList.add('visible')}); addEventListener('scroll',reveal); reveal();
+const sections=$$('section[id]'); addEventListener('scroll',()=>{let cur='';sections.forEach(s=>{if(scrollY>=s.offsetTop-150)cur=s.id}); $$('.nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));});
+$('#search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();$$('.nav a').forEach(a=>{a.style.display=a.textContent.toLowerCase().includes(q)?'flex':'none'})});
+function centerPos(el,container){const a=el.getBoundingClientRect(),b=container.getBoundingClientRect();return {x:a.left-b.left+a.width/2-8,y:a.top-b.top+a.height/2-8}}
+async function movePacket(packet, nodes, start, end){packet.style.opacity=1;let p=centerPos(nodes[start], $('#reqDiagram'));packet.style.left=p.x+'px';packet.style.top=p.y+'px';await sleep(80);p=centerPos(nodes[end], $('#reqDiagram'));packet.style.left=p.x+'px';packet.style.top=p.y+'px';await sleep(690)}
+function log(box,msg,kind=''){box.innerHTML += '<div class="'+kind+'">'+msg+'</div>'; box.scrollTop=box.scrollHeight}
+$('#resetReq').onclick=()=>{$('#reqConsole').innerHTML='$ ready — click Run Simulation';$('#finalJson').classList.remove('show');$$('.sim-node').forEach(n=>n.classList.remove('active'));['#reqPacket','#resPacket'].forEach(id=>{$(id).style.opacity=0})};
+$('#runReq').onclick=async()=>{$('#resetReq').onclick();const nodes=$$('.sim-node'),c=$('#reqConsole'),req=$('#reqPacket'),res=$('#resPacket');const fwd=['Client','Controller','Service','Repository','MongoDB'];const logs=['CLIENT  POST /api/v1/courses with create-course-valid.json','CONTROLLER  @Valid CourseRequestDTO accepted; delegates to courseService.createCourse()','SERVICE  checks duplicates: code, instructorId, title; generates slug spring-boot-fundamentals','REPOSITORY  MongoRepository.save(course) prepares insert','MONGODB  document persisted into database course / collection course'];for(let i=0;i<fwd.length;i++){nodes.forEach(n=>n.classList.remove('active'));nodes[i].classList.add('active');log(c,'→ '+logs[i]);if(i<fwd.length-1)await movePacket(req,nodes,i,i+1);await sleep(260)}log(c,'✓ REQUEST COMPLETE — now response travels back, step by step');for(let i=nodes.length-1;i>=0;i--){nodes.forEach(n=>n.classList.remove('active'));nodes[i].classList.add('active');log(c,'← RESPONSE at '+nodes[i].dataset.name);if(i>0)await movePacket(res,nodes,i,i-1);await sleep(250)}nodes[0].classList.add('active');log(c,'✓ CLIENT received 201 Created. Rendering JSON now.');$('#finalJson').classList.add('show')};
+function resetRails(){$$('.rail-item').forEach(i=>{i.classList.remove('active','pass','fail')});$('#testConsole').innerHTML='$ ready — run the test simulation'}
+$('#resetTests').onclick=resetRails;
+async function runRail(sel,fail=false){const items=$$(sel+' .rail-item');for(let i=0;i<items.length;i++){items.forEach(x=>x.classList.remove('active'));items[i].classList.add('active');log($('#testConsole'),'→ '+items[i].textContent.trim());await sleep(520);if(fail&&sel==='#intRail'&&i===4){items[i].classList.add('fail');log($('#testConsole'),'✗ MongoSocketOpenException: Connection refused 127.0.0.1:27017');return}items[i].classList.add('pass')}}
+$('#runTests').onclick=async()=>{resetRails();log($('#testConsole'),'$ mvn clean test');await Promise.all([runRail('#unitRail'),runRail('#intRail')]);log($('#testConsole'),'✓ BUILD SUCCESS — unit and integration tests passed')};
+$('#failTests').onclick=async()=>{resetRails();log($('#testConsole'),'$ mvn -Dtest=*IntegrationTest test');await runRail('#intRail',true);log($('#testConsole'),'Reason: Spring expected MongoDB at localhost, but no MongoDB process/container accepted connections on 127.0.0.1:27017. Start MongoDB, run Docker, or rely on Testcontainers with Docker available.')};
+</script>
+</body>
+</html>
