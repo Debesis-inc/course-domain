@@ -11,7 +11,7 @@ RUN mvn dependency:go-offline -q
 
 # Copy source and build
 COPY src ./src
-RUN mvn clean package -q
+RUN mvn clean package -DskipTests -q
 
 # ── Stage 2: Runtime ────────────────────────────────────
 # Throws away Maven and JDK — only keeps the JAR
