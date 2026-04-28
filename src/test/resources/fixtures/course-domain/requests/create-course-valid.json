@@ -1,0 +1,10 @@
+{
+  "code": "SB101",
+  "title": "Spring Boot Fundamentals",
+  "description": "Build a REST API with Spring Boot",
+  "instructorId": "TM1234",
+  "level": "beginner",
+  "languageCode": "en",
+  "thumbnailUrl": "https://example.com/spring.png",
+  "durationHours": 12
+}
