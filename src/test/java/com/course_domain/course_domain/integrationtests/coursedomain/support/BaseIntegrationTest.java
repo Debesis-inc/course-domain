@@ -1,14 +1,10 @@
 package com.course_domain.course_domain.integrationtests.coursedomain.support;
 
-import com.course_domain.course_domain.integrationtests.coursedomain.config.WireMockTestConfig;
 import com.course_domain.course_domain.repository.CourseRepository;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,18 +14,16 @@ import org.testcontainers.mongodb.MongoDBContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import(WireMockTestConfig.class)
 @Testcontainers
 public abstract class BaseIntegrationTest {
 
     @Container
-    static MongoDBContainer mongo =
+    static MongoDBContainer mongoDBContainer =
             new MongoDBContainer("mongo:7.0");
 
     @DynamicPropertySource
     static void mongoProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongo::getReplicaSetUrl);
+        registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
 
     @Autowired
@@ -38,12 +32,8 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected CourseRepository courseRepository;
 
-    @Autowired
-    protected WireMockServer wireMockServer;
-
     @BeforeEach
     void resetIntegrationTestState() {
         courseRepository.deleteAll();
-        WireMockStubs.reset(wireMockServer);
     }
 }
