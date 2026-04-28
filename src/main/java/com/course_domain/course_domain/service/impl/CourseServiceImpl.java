@@ -2,6 +2,7 @@ package com.course_domain.course_domain.service.impl;
 
 import com.course_domain.course_domain.dto.request.CourseRequestDTO;
 import com.course_domain.course_domain.dto.response.CourseResponseDTO;
+import com.course_domain.course_domain.exception.CourseNotFoundException;
 import com.course_domain.course_domain.exception.DuplicateCourseFieldException;
 import com.course_domain.course_domain.mapper.CourseConverter;
 import com.course_domain.course_domain.mapper.CourseMapper;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -36,6 +38,21 @@ public class CourseServiceImpl implements CourseService {
 
         Course savedCourse = courseRepository.save(course);
         return courseMapper.toResponseDTO(savedCourse);
+    }
+
+    @Override
+    public List<CourseResponseDTO> getCourses() {
+        return courseRepository.findAll()
+                .stream()
+                .map(courseMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public CourseResponseDTO getCourseById(String id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException(id));
+        return courseMapper.toResponseDTO(course);
     }
 
     private void validateUniqueCourseFields(CourseRequestDTO courseRequestDTO) {

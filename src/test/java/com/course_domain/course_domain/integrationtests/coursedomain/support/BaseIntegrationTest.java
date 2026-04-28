@@ -14,12 +14,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers(disabledWithoutDocker = true)
+//@Testcontainers(disabledWithoutDocker = true)
 public abstract class BaseIntegrationTest {
 
     @Container
     static MongoDBContainer mongoDBContainer =
-            new MongoDBContainer("mongo:7.0");
+            new MongoDBContainer("mongo:8.0");
 
     @DynamicPropertySource
     static void mongoProperties(DynamicPropertyRegistry registry) {
