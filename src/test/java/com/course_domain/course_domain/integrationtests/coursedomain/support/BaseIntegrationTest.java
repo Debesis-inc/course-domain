@@ -8,13 +8,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mongodb.MongoDBContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 public abstract class BaseIntegrationTest {
 
     @Container
