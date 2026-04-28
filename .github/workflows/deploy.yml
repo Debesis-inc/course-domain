@@ -58,6 +58,23 @@ jobs:
 
       # 4. Only log into Docker Hub on pushes to main
       #    No point logging in for PR checks
+      - name: Check Docker secrets exist
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "❌ DOCKER_USERNAME is missing"
+            exit 1
+          else
+            echo "✅ DOCKER_USERNAME exists"
+          fi
+
+          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "❌ DOCKER_PASSWORD is missing"
+            exit 1
+          else
+            echo "✅ DOCKER_PASSWORD exists"
+          fi
+
       - name: Log in to Docker Hub
         if: github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
