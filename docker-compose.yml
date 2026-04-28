@@ -13,7 +13,8 @@ services:
       MONGO_INITDB_DATABASE: course
     volumes:
       - mongo_data:/data/db    # data persists across container restarts
-  # only accessible from localhost — not public
+    ports:
+      - "127.0.0.1:27017:27017"  # only accessible from localhost — not public
 
   # ── Spring Boot App ───────────────────────────────────
   course-domain:

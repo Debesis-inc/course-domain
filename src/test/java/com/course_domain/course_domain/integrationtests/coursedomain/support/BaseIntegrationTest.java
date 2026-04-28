@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Testcontainers(disabledWithoutDocker = true)
+@Testcontainers
 public abstract class BaseIntegrationTest {
 
     @Container
@@ -23,7 +23,12 @@ public abstract class BaseIntegrationTest {
 
     @DynamicPropertySource
     static void mongoProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+        mongoDBContainer.start();
+
+        String mongoUri = mongoDBContainer.getReplicaSetUrl("course_test");
+        System.out.println("TESTCONTAINERS MONGO URI = " + mongoUri);
+
+        registry.add("spring.mongodb.uri", () -> mongoUri);
     }
 
     @Autowired
