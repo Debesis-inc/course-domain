@@ -32,11 +32,28 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Verify Java and Docker
+        run: |
+          java -version
+          javac -version
+          mvn -version
+          docker version
+          docker info
+
       # 3. Run your tests
       #    If any test fails → this step fails → pipeline stops
       #    → deploy job never runs → server is safe
       - name: Run tests
         run: mvn test
+
+      - name: Print Surefire reports if tests fail
+        if: failure()
+        run: |
+          echo "===== Surefire TXT Reports ====="
+          find target/surefire-reports -name "*.txt" -type f -print -exec cat {} \;
+
+          echo "===== Surefire XML Reports ====="
+          find target/surefire-reports -name "*.xml" -type f -print -exec cat {} \;
         # ↑ change to: mvn test   once you have real tests
 
       # 4. Only log into Docker Hub on pushes to main
