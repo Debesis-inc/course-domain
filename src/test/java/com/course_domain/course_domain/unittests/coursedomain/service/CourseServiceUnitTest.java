@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 class CourseServiceUnitTest {
@@ -115,6 +116,154 @@ class CourseServiceUnitTest {
                 .hasMessage("Course not found: missing-course");
 
         verify(courseRepository).findById("missing-course");
+    }
+
+    @Test
+    void shouldUpdateCourseWhenCourseExists() {
+        CourseRequestDTO request = validRequest();
+        request.setTitle("Updated Spring Boot Fundamentals");
+        Course course = course("course-1", "OLD101");
+        CourseResponseDTO response = response("course-1", "SB101");
+        response.setTitle("Updated Spring Boot Fundamentals");
+        response.setSlug("updated-spring-boot-fundamentals");
+
+        when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Updated Spring Boot Fundamentals")).thenReturn(Optional.empty());
+        when(courseRepository.save(course)).thenReturn(course);
+        when(courseMapper.toResponseDTO(course)).thenReturn(response);
+
+        CourseResponseDTO result = courseService.updateCourse("course-1", request);
+
+        assertThat(result).isEqualTo(response);
+        assertThat(course.getCode()).isEqualTo("SB101");
+        assertThat(course.getTitle()).isEqualTo("Updated Spring Boot Fundamentals");
+        assertThat(course.getSlug()).isEqualTo("updated-spring-boot-fundamentals");
+        assertThat(course.getId()).isEqualTo("course-1");
+        verify(courseRepository).findById("course-1");
+        verify(courseRepository).save(course);
+        verify(courseMapper).toResponseDTO(course);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenUpdatingUnknownCourseId() {
+        CourseRequestDTO request = validRequest();
+        when(courseRepository.findById("missing-course")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> courseService.updateCourse("missing-course", request))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course not found: missing-course");
+
+        verify(courseRepository).findById("missing-course");
+        verify(courseRepository, never()).save(any(Course.class));
+    }
+
+    @Test
+    void shouldRejectDuplicateCourseCodeWhenUpdatingCourse() {
+        CourseRequestDTO request = validRequest();
+        Course course = course("course-1", "OLD101");
+        Course duplicateCourse = course("course-2", "SB101");
+
+        when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.of(duplicateCourse));
+
+        assertThatThrownBy(() -> courseService.updateCourse("course-1", request))
+                .isInstanceOf(DuplicateCourseFieldException.class)
+                .hasMessage("Course code already exists: SB101");
+
+        verify(courseRepository).findById("course-1");
+        verify(courseRepository, never()).save(any(Course.class));
+    }
+
+    @Test
+    void shouldRejectDuplicateCourseTitleWhenUpdatingCourse() {
+        CourseRequestDTO request = validRequest();
+        Course course = course("course-1", "OLD101");
+        Course duplicateCourse = course("course-2", "WEB101");
+
+        when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Spring Boot Fundamentals")).thenReturn(Optional.of(duplicateCourse));
+
+        assertThatThrownBy(() -> courseService.updateCourse("course-1", request))
+                .isInstanceOf(DuplicateCourseFieldException.class)
+                .hasMessage("Course title already exists: Spring Boot Fundamentals");
+
+        verify(courseRepository).findById("course-1");
+        verify(courseRepository, never()).save(any(Course.class));
+    }
+
+    @Test
+    void shouldPreserveIdAndCreatedAtDuringUpdate() {
+        CourseRequestDTO request = validRequest();
+        Course course = course("course-1", "OLD101");
+        var createdAt = java.time.Instant.parse("2026-04-28T10:00:00Z");
+        course.setCreatedAt(createdAt);
+
+        when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Spring Boot Fundamentals")).thenReturn(Optional.empty());
+        when(courseRepository.save(course)).thenReturn(course);
+        when(courseMapper.toResponseDTO(course)).thenReturn(response("course-1", "SB101"));
+
+        courseService.updateCourse("course-1", request);
+
+        assertThat(course.getId()).isEqualTo("course-1");
+        assertThat(course.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(course.getUpdatedAt()).isNotNull();
+        assertThat(course.getUpdatedAt()).isAfter(createdAt);
+    }
+
+    @Test
+    void shouldDeleteCourseWhenCourseExists() {
+        Course course = course("course-1", "SB101");
+        when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
+
+        courseService.deleteCourse("course-1");
+
+        verify(courseRepository).findById("course-1");
+        verify(courseRepository).delete(course);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenDeletingUnknownCourseId() {
+        when(courseRepository.findById("missing-course")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> courseService.deleteCourse("missing-course"))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course not found: missing-course");
+
+        verify(courseRepository).findById("missing-course");
+        verify(courseRepository, never()).delete(any(Course.class));
+    }
+
+    @Test
+    void shouldReturnCourseBySlugWhenSlugExists() {
+        Course course = course("course-1", "SB101");
+        CourseResponseDTO response = response("course-1", "SB101");
+
+        when(courseRepository.findBySlug("spring-boot-fundamentals")).thenReturn(Optional.of(course));
+        when(courseMapper.toResponseDTO(course)).thenReturn(response);
+
+        CourseResponseDTO result = courseService.getCourseBySlug("spring-boot-fundamentals");
+
+        assertThat(result).isEqualTo(response);
+        verify(courseRepository).findBySlug("spring-boot-fundamentals");
+        verify(courseMapper).toResponseDTO(course);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenSlugDoesNotExist() {
+        when(courseRepository.findBySlug("missing-course")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> courseService.getCourseBySlug("missing-course"))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course not found: missing-course");
+
+        verify(courseRepository).findBySlug("missing-course");
     }
 
     private CourseRequestDTO validRequest() {

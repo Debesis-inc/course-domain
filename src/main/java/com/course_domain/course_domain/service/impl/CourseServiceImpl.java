@@ -55,6 +55,41 @@ public class CourseServiceImpl implements CourseService {
         return courseMapper.toResponseDTO(course);
     }
 
+    @Override
+    public CourseResponseDTO updateCourse(String id, CourseRequestDTO courseRequestDTO) {
+        Course existingCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException(id));
+        validateUniqueCourseFieldsForUpdate(id, courseRequestDTO);
+
+        existingCourse.setCode(courseRequestDTO.getCode());
+        existingCourse.setTitle(courseRequestDTO.getTitle());
+        existingCourse.setSlug(toSlug(courseRequestDTO.getTitle()));
+        existingCourse.setDescription(courseRequestDTO.getDescription());
+        existingCourse.setInstructorId(courseRequestDTO.getInstructorId());
+        existingCourse.setLevel(courseRequestDTO.getLevel());
+        existingCourse.setLanguageCode(courseRequestDTO.getLanguageCode());
+        existingCourse.setThumbnailUrl(courseRequestDTO.getThumbnailUrl());
+        existingCourse.setDurationHours(courseRequestDTO.getDurationHours());
+        existingCourse.setUpdatedAt(Instant.now());
+
+        Course savedCourse = courseRepository.save(existingCourse);
+        return courseMapper.toResponseDTO(savedCourse);
+    }
+
+    @Override
+    public void deleteCourse(String id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException(id));
+        courseRepository.delete(course);
+    }
+
+    @Override
+    public CourseResponseDTO getCourseBySlug(String slug) {
+        Course course = courseRepository.findBySlug(slug)
+                .orElseThrow(() -> new CourseNotFoundException(slug));
+        return courseMapper.toResponseDTO(course);
+    }
+
     private void validateUniqueCourseFields(CourseRequestDTO courseRequestDTO) {
         if (courseRepository.existsByCodeIgnoreCase(courseRequestDTO.getCode())) {
             log.warn("Course code already exists: {}", courseRequestDTO.getCode());
@@ -70,6 +105,29 @@ public class CourseServiceImpl implements CourseService {
             log.warn("Course title already exists: {}", courseRequestDTO.getTitle());
             throw new DuplicateCourseFieldException("title", courseRequestDTO.getTitle());
         }
+    }
+
+    private void validateUniqueCourseFieldsForUpdate(String currentCourseId, CourseRequestDTO courseRequestDTO) {
+        courseRepository.findByCodeIgnoreCase(courseRequestDTO.getCode())
+                .filter(course -> !currentCourseId.equals(course.getId()))
+                .ifPresent(course -> {
+                    log.warn("Course code already exists: {}", courseRequestDTO.getCode());
+                    throw new DuplicateCourseFieldException("code", courseRequestDTO.getCode());
+                });
+
+        courseRepository.findByInstructorIdIgnoreCase(courseRequestDTO.getInstructorId())
+                .filter(course -> !currentCourseId.equals(course.getId()))
+                .ifPresent(course -> {
+                    log.warn("Course instructorId already exists: {}", courseRequestDTO.getInstructorId());
+                    throw new DuplicateCourseFieldException("instructorId", courseRequestDTO.getInstructorId());
+                });
+
+        courseRepository.findByTitleIgnoreCase(courseRequestDTO.getTitle())
+                .filter(course -> !currentCourseId.equals(course.getId()))
+                .ifPresent(course -> {
+                    log.warn("Course title already exists: {}", courseRequestDTO.getTitle());
+                    throw new DuplicateCourseFieldException("title", courseRequestDTO.getTitle());
+                });
     }
 
     private String toSlug(String value) {

@@ -11,8 +11,10 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,5 +130,144 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("Course not found: missing-course"))
                 .andExpect(jsonPath("$.path").value("/api/v1/courses/missing-course"));
+    }
+
+    @Test
+    void shouldUpdatePersistedCourse() throws Exception {
+        courseRepository.save(TestDataFactory.persistedCourse(
+                "course-1",
+                "SB101",
+                "Spring Boot Fundamentals",
+                "TM1234"
+        ));
+        String requestBody = JsonFixtureLoader.load("fixtures/course-domain/requests/update-course-valid.json");
+
+        mockMvc.perform(put("/api/v1/courses/course-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("course-1"))
+                .andExpect(jsonPath("$.code").value("WEB101"))
+                .andExpect(jsonPath("$.title").value("Introduction to Web Design Updated"))
+                .andExpect(jsonPath("$.slug").value("introduction-to-web-design-updated"))
+                .andExpect(jsonPath("$.description").value("Updated course description."))
+                .andExpect(jsonPath("$.instructorId").value("TM5678"))
+                .andExpect(jsonPath("$.durationHours").value(30));
+
+        var persistedCourse = courseRepository.findById("course-1").orElseThrow();
+        assertThat(persistedCourse.getCode()).isEqualTo("WEB101");
+        assertThat(persistedCourse.getTitle()).isEqualTo("Introduction to Web Design Updated");
+        assertThat(persistedCourse.getSlug()).isEqualTo("introduction-to-web-design-updated");
+        assertThat(persistedCourse.getCreatedAt()).isEqualTo(java.time.Instant.parse("2026-04-28T10:00:00Z"));
+        assertThat(persistedCourse.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingCourseIdDoesNotExist() throws Exception {
+        String requestBody = JsonFixtureLoader.load("fixtures/course-domain/requests/update-course-valid.json");
+
+        mockMvc.perform(put("/api/v1/courses/missing-course")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("Course not found: missing-course"))
+                .andExpect(jsonPath("$.path").value("/api/v1/courses/missing-course"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingWithInvalidRequest() throws Exception {
+        String requestBody = JsonFixtureLoader.load("fixtures/course-domain/requests/create-course-missing-title.json");
+
+        mockMvc.perform(put("/api/v1/courses/course-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnConflictWhenUpdatingCourseCodeAlreadyExists() throws Exception {
+        courseRepository.save(TestDataFactory.persistedCourse(
+                "course-1",
+                "SB101",
+                "Spring Boot Fundamentals",
+                "TM1234"
+        ));
+        courseRepository.save(TestDataFactory.persistedCourse(
+                "course-2",
+                "WEB101",
+                "Introduction to Web Design",
+                "TM5678"
+        ));
+        String requestBody = """
+                {
+                  "code": "WEB101",
+                  "title": "Spring Boot Fundamentals Updated",
+                  "description": "Updated course description.",
+                  "instructorId": "TM1234",
+                  "level": "beginner",
+                  "languageCode": "en",
+                  "thumbnailUrl": "https://example.com/spring-updated.png",
+                  "durationHours": 30
+                }
+                """;
+
+        mockMvc.perform(put("/api/v1/courses/course-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("Course code already exists: WEB101"))
+                .andExpect(jsonPath("$.path").value("/api/v1/courses/course-1"));
+    }
+
+    @Test
+    void shouldDeletePersistedCourse() throws Exception {
+        courseRepository.save(TestDataFactory.persistedCourse(
+                "course-1",
+                "SB101",
+                "Spring Boot Fundamentals",
+                "TM1234"
+        ));
+
+        mockMvc.perform(delete("/api/v1/courses/course-1"))
+                .andExpect(status().isNoContent());
+
+        assertThat(courseRepository.findById("course-1")).isEmpty();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingCourseIdDoesNotExist() throws Exception {
+        mockMvc.perform(delete("/api/v1/courses/missing-course"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("Course not found: missing-course"))
+                .andExpect(jsonPath("$.path").value("/api/v1/courses/missing-course"));
+    }
+
+    @Test
+    void shouldReturnPersistedCourseBySlug() throws Exception {
+        courseRepository.save(TestDataFactory.persistedCourse(
+                "course-1",
+                "SB101",
+                "Spring Boot Fundamentals",
+                "TM1234"
+        ));
+
+        mockMvc.perform(get("/api/v1/courses/slug/spring-boot-fundamentals"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("course-1"))
+                .andExpect(jsonPath("$.code").value("SB101"))
+                .andExpect(jsonPath("$.title").value("Spring Boot Fundamentals"))
+                .andExpect(jsonPath("$.slug").value("spring-boot-fundamentals"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenSlugDoesNotExist() throws Exception {
+        mockMvc.perform(get("/api/v1/courses/slug/missing-course"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("Course not found: missing-course"))
+                .andExpect(jsonPath("$.path").value("/api/v1/courses/slug/missing-course"));
     }
 }

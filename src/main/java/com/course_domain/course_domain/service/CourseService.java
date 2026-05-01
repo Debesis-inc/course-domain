@@ -11,4 +11,10 @@ public interface CourseService {
     List<CourseResponseDTO> getCourses();
 
     CourseResponseDTO getCourseById(String id);
+
+    CourseResponseDTO updateCourse(String id, CourseRequestDTO courseRequestDTO);
+
+    void deleteCourse(String id);
+
+    CourseResponseDTO getCourseBySlug(String slug);
 }

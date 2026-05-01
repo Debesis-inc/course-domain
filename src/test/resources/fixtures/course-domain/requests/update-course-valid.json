@@ -1,0 +1,10 @@
+{
+  "code": "WEB101",
+  "title": "Introduction to Web Design Updated",
+  "description": "Updated course description.",
+  "instructorId": "TM5678",
+  "level": "beginner",
+  "languageCode": "en",
+  "thumbnailUrl": "https://example.com/web-design-updated.png",
+  "durationHours": 30
+}

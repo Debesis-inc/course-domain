@@ -7,9 +7,11 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,5 +38,24 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable String id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CourseResponseDTO> updateCourse(
+            @PathVariable String id,
+            @Valid @RequestBody CourseRequestDTO courseRequestDTO
+    ) {
+        return ResponseEntity.ok(courseService.updateCourse(id, courseRequestDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable String id) {
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<CourseResponseDTO> getCourseBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(courseService.getCourseBySlug(slug));
     }
 }
