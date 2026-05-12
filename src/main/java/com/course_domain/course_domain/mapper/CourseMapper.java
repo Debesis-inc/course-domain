@@ -8,5 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
+        @Mapping(target = "courseId", source = "subjectId")
+        @Mapping(target = "courseName", source = "subjectName")
         CourseResponseDTO toResponseDTO(Course course);
 }

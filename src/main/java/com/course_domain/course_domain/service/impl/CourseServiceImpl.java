@@ -61,15 +61,29 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new CourseNotFoundException(id));
         validateUniqueCourseFieldsForUpdate(id, courseRequestDTO);
 
+        existingCourse.setInstitutionId(courseRequestDTO.getInstitutionId());
+        existingCourse.setAcademicYearId(courseRequestDTO.getAcademicYearId());
+        existingCourse.setTermId(courseRequestDTO.getTermId());
         existingCourse.setCode(courseRequestDTO.getCode());
         existingCourse.setTitle(courseRequestDTO.getTitle());
         existingCourse.setSlug(toSlug(courseRequestDTO.getTitle()));
         existingCourse.setDescription(courseRequestDTO.getDescription());
+        existingCourse.setCurriculumLevel(courseRequestDTO.getCurriculumLevel());
+        existingCourse.setClassLevel(courseRequestDTO.getClassLevel());
+        existingCourse.setStreamId(courseRequestDTO.getStreamId());
+        existingCourse.setSubjectId(courseRequestDTO.getCourseId());
+        existingCourse.setSubjectName(courseRequestDTO.getCourseName());
+        existingCourse.setCourseCategory(courseRequestDTO.getCourseCategory());
+        existingCourse.setCourseType(courseRequestDTO.getCourseType());
+        existingCourse.setCombinationCode(courseRequestDTO.getCombinationCode());
+        existingCourse.setCombinationName(courseRequestDTO.getCombinationName());
         existingCourse.setInstructorId(courseRequestDTO.getInstructorId());
+        existingCourse.setInstructorUsername(courseRequestDTO.getInstructorUsername());
         existingCourse.setLevel(courseRequestDTO.getLevel());
         existingCourse.setLanguageCode(courseRequestDTO.getLanguageCode());
         existingCourse.setThumbnailUrl(courseRequestDTO.getThumbnailUrl());
         existingCourse.setDurationHours(courseRequestDTO.getDurationHours());
+        existingCourse.setStatus(courseRequestDTO.getStatus());
         existingCourse.setUpdatedAt(Instant.now());
 
         Course savedCourse = courseRepository.save(existingCourse);

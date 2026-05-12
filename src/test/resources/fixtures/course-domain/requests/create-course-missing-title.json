@@ -1,8 +1,20 @@
 {
-  "code": "SB101",
-  "description": "Build a REST API with Spring Boot",
-  "instructorId": "TM1234",
+  "institutionId": "SCH001",
+  "academicYearId": "AY2026",
+  "termId": "TERM1",
+  "code": "BIO-S1-T1-2026",
+  "description": "Senior 1 Biology for Term 1.",
+  "curriculumLevel": "O_LEVEL",
+  "classLevel": "S1",
+  "streamId": "S1-A",
+  "courseId": "BIO",
+  "courseName": "Biology",
+  "courseCategory": "SCIENCE",
+  "courseType": "COMPULSORY",
+  "instructorId": "TCH001",
+  "instructorUsername": "mr-kato",
   "level": "beginner",
   "languageCode": "en",
-  "durationHours": 12
+  "durationHours": 48,
+  "status": "DRAFT"
 }

@@ -29,24 +29,39 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", not(nullValue())))
-                .andExpect(jsonPath("$.code").value("SB101"))
-                .andExpect(jsonPath("$.title").value("Spring Boot Fundamentals"))
-                .andExpect(jsonPath("$.slug").value("spring-boot-fundamentals"))
-                .andExpect(jsonPath("$.description").value("Build a REST API with Spring Boot"))
-                .andExpect(jsonPath("$.instructorId").value("TM1234"))
+                .andExpect(jsonPath("$.institutionId").value("SCH001"))
+                .andExpect(jsonPath("$.academicYearId").value("AY2026"))
+                .andExpect(jsonPath("$.termId").value("TERM1"))
+                .andExpect(jsonPath("$.code").value("BIO-S1-T1-2026"))
+                .andExpect(jsonPath("$.title").value("Biology"))
+                .andExpect(jsonPath("$.slug").value("biology"))
+                .andExpect(jsonPath("$.description").value("Senior 1 Biology for Term 1."))
+                .andExpect(jsonPath("$.curriculumLevel").value("O_LEVEL"))
+                .andExpect(jsonPath("$.classLevel").value("S1"))
+                .andExpect(jsonPath("$.streamId").value("S1-A"))
+                .andExpect(jsonPath("$.courseId").value("BIO"))
+                .andExpect(jsonPath("$.courseName").value("Biology"))
+                .andExpect(jsonPath("$.courseCategory").value("SCIENCE"))
+                .andExpect(jsonPath("$.courseType").value("COMPULSORY"))
+                .andExpect(jsonPath("$.instructorId").value("TCH001"))
+                .andExpect(jsonPath("$.instructorUsername").value("mr-kato"))
+                .andExpect(jsonPath("$.durationHours").value(48))
+                .andExpect(jsonPath("$.status").value("DRAFT"))
                 .andExpect(jsonPath("$.createdAt", not(nullValue())))
                 .andExpect(jsonPath("$.updatedAt", not(nullValue())));
 
         var persistedCourses = courseRepository.findAll();
         assertThat(persistedCourses).hasSize(1);
-        assertThat(persistedCourses.getFirst().getCode()).isEqualTo("SB101");
-        assertThat(persistedCourses.getFirst().getTitle()).isEqualTo("Spring Boot Fundamentals");
-        assertThat(persistedCourses.getFirst().getSlug()).isEqualTo("spring-boot-fundamentals");
+        assertThat(persistedCourses.getFirst().getCode()).isEqualTo("BIO-S1-T1-2026");
+        assertThat(persistedCourses.getFirst().getTitle()).isEqualTo("Biology");
+        assertThat(persistedCourses.getFirst().getSlug()).isEqualTo("biology");
+        assertThat(persistedCourses.getFirst().getSubjectId()).isEqualTo("BIO");
+        assertThat(persistedCourses.getFirst().getSubjectName()).isEqualTo("Biology");
     }
 
     @Test
     void shouldReturnConflictWhenCourseCodeAlreadyExists() throws Exception {
-        courseRepository.save(TestDataFactory.existingCourseWithCode("SB101"));
+        courseRepository.save(TestDataFactory.existingCourseWithCode("BIO-S1-T1-2026"));
         String requestBody = JsonFixtureLoader.load("fixtures/course-domain/requests/create-course-valid.json");
 
         mockMvc.perform(post("/api/v1/courses")
@@ -71,25 +86,25 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnAllPersistedCourses() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-2",
-                "WEB101",
-                "Introduction to Web Design",
-                "TM5678"
+                "PHY-S1-T1-2026",
+                "Physics",
+                "TCH002"
         ));
 
         mockMvc.perform(get("/api/v1/courses"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[*].id", containsInAnyOrder("course-1", "course-2")))
-                .andExpect(jsonPath("$[*].code", containsInAnyOrder("SB101", "WEB101")))
+                .andExpect(jsonPath("$[*].code", containsInAnyOrder("BIO-S1-T1-2026", "PHY-S1-T1-2026")))
                 .andExpect(jsonPath("$[*].title", containsInAnyOrder(
-                        "Spring Boot Fundamentals",
-                        "Introduction to Web Design"
+                        "Biology",
+                        "Physics"
                 )));
     }
 
@@ -104,23 +119,34 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnPersistedCourseById() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
 
         mockMvc.perform(get("/api/v1/courses/course-1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("course-1"))
-                .andExpect(jsonPath("$.code").value("SB101"))
-                .andExpect(jsonPath("$.title").value("Spring Boot Fundamentals"))
-                .andExpect(jsonPath("$.slug").value("spring-boot-fundamentals"))
-                .andExpect(jsonPath("$.description").value("Build a REST API with Spring Boot"))
-                .andExpect(jsonPath("$.instructorId").value("TM1234"))
+                .andExpect(jsonPath("$.institutionId").value("SCH001"))
+                .andExpect(jsonPath("$.academicYearId").value("AY2026"))
+                .andExpect(jsonPath("$.termId").value("TERM1"))
+                .andExpect(jsonPath("$.code").value("BIO-S1-T1-2026"))
+                .andExpect(jsonPath("$.title").value("Biology"))
+                .andExpect(jsonPath("$.slug").value("biology"))
+                .andExpect(jsonPath("$.description").value("Biology for Term 1."))
+                .andExpect(jsonPath("$.curriculumLevel").value("O_LEVEL"))
+                .andExpect(jsonPath("$.classLevel").value("S1"))
+                .andExpect(jsonPath("$.courseId").value("BIO"))
+                .andExpect(jsonPath("$.courseName").value("Biology"))
+                .andExpect(jsonPath("$.courseCategory").value("SCIENCE"))
+                .andExpect(jsonPath("$.courseType").value("COMPULSORY"))
+                .andExpect(jsonPath("$.instructorId").value("TCH001"))
+                .andExpect(jsonPath("$.instructorUsername").value("mr-kato"))
                 .andExpect(jsonPath("$.level").value("beginner"))
                 .andExpect(jsonPath("$.languageCode").value("en"))
-                .andExpect(jsonPath("$.thumbnailUrl").value("https://example.com/spring.png"))
-                .andExpect(jsonPath("$.durationHours").value(12));
+                .andExpect(jsonPath("$.thumbnailUrl").value("https://cdn.example.com/course.jpg"))
+                .andExpect(jsonPath("$.durationHours").value(48))
+                .andExpect(jsonPath("$.status").value("DRAFT"));
     }
 
     @Test
@@ -136,9 +162,9 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldUpdatePersistedCourse() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
         String requestBody = JsonFixtureLoader.load("fixtures/course-domain/requests/update-course-valid.json");
 
@@ -147,17 +173,24 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("course-1"))
-                .andExpect(jsonPath("$.code").value("WEB101"))
-                .andExpect(jsonPath("$.title").value("Introduction to Web Design Updated"))
-                .andExpect(jsonPath("$.slug").value("introduction-to-web-design-updated"))
-                .andExpect(jsonPath("$.description").value("Updated course description."))
-                .andExpect(jsonPath("$.instructorId").value("TM5678"))
-                .andExpect(jsonPath("$.durationHours").value(30));
+                .andExpect(jsonPath("$.termId").value("TERM2"))
+                .andExpect(jsonPath("$.code").value("PHY-S1-T2-2026"))
+                .andExpect(jsonPath("$.title").value("Physics"))
+                .andExpect(jsonPath("$.slug").value("physics"))
+                .andExpect(jsonPath("$.description").value("Senior 1 Physics for Term 2."))
+                .andExpect(jsonPath("$.courseId").value("PHY"))
+                .andExpect(jsonPath("$.courseName").value("Physics"))
+                .andExpect(jsonPath("$.instructorId").value("TCH002"))
+                .andExpect(jsonPath("$.instructorUsername").value("ms-nambi"))
+                .andExpect(jsonPath("$.durationHours").value(36))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
 
         var persistedCourse = courseRepository.findById("course-1").orElseThrow();
-        assertThat(persistedCourse.getCode()).isEqualTo("WEB101");
-        assertThat(persistedCourse.getTitle()).isEqualTo("Introduction to Web Design Updated");
-        assertThat(persistedCourse.getSlug()).isEqualTo("introduction-to-web-design-updated");
+        assertThat(persistedCourse.getCode()).isEqualTo("PHY-S1-T2-2026");
+        assertThat(persistedCourse.getTitle()).isEqualTo("Physics");
+        assertThat(persistedCourse.getSlug()).isEqualTo("physics");
+        assertThat(persistedCourse.getSubjectId()).isEqualTo("PHY");
+        assertThat(persistedCourse.getSubjectName()).isEqualTo("Physics");
         assertThat(persistedCourse.getCreatedAt()).isEqualTo(java.time.Instant.parse("2026-04-28T10:00:00Z"));
         assertThat(persistedCourse.getUpdatedAt()).isNotNull();
     }
@@ -189,25 +222,34 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnConflictWhenUpdatingCourseCodeAlreadyExists() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-2",
-                "WEB101",
-                "Introduction to Web Design",
-                "TM5678"
+                "PHY-S1-T1-2026",
+                "Physics",
+                "TCH002"
         ));
         String requestBody = """
                 {
-                  "code": "WEB101",
-                  "title": "Spring Boot Fundamentals Updated",
+                  "institutionId": "SCH001",
+                  "academicYearId": "AY2026",
+                  "termId": "TERM1",
+                  "code": "PHY-S1-T1-2026",
+                  "title": "Biology Updated",
                   "description": "Updated course description.",
-                  "instructorId": "TM1234",
+                  "curriculumLevel": "O_LEVEL",
+                  "classLevel": "S1",
+                  "courseId": "BIO",
+                  "courseName": "Biology",
+                  "courseCategory": "SCIENCE",
+                  "courseType": "COMPULSORY",
+                  "instructorId": "TCH001",
                   "level": "beginner",
                   "languageCode": "en",
-                  "thumbnailUrl": "https://example.com/spring-updated.png",
+                  "thumbnailUrl": "https://cdn.example.com/biology-updated.jpg",
                   "durationHours": 30
                 }
                 """;
@@ -217,7 +259,7 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
                         .content(requestBody))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
-                .andExpect(jsonPath("$.message").value("Course code already exists: WEB101"))
+                .andExpect(jsonPath("$.message").value("Course code already exists: PHY-S1-T1-2026"))
                 .andExpect(jsonPath("$.path").value("/api/v1/courses/course-1"));
     }
 
@@ -225,9 +267,9 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldDeletePersistedCourse() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
 
         mockMvc.perform(delete("/api/v1/courses/course-1"))
@@ -249,17 +291,17 @@ class CourseControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnPersistedCourseBySlug() throws Exception {
         courseRepository.save(TestDataFactory.persistedCourse(
                 "course-1",
-                "SB101",
-                "Spring Boot Fundamentals",
-                "TM1234"
+                "BIO-S1-T1-2026",
+                "Biology",
+                "TCH001"
         ));
 
-        mockMvc.perform(get("/api/v1/courses/slug/spring-boot-fundamentals"))
+        mockMvc.perform(get("/api/v1/courses/slug/biology"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("course-1"))
-                .andExpect(jsonPath("$.code").value("SB101"))
-                .andExpect(jsonPath("$.title").value("Spring Boot Fundamentals"))
-                .andExpect(jsonPath("$.slug").value("spring-boot-fundamentals"));
+                .andExpect(jsonPath("$.code").value("BIO-S1-T1-2026"))
+                .andExpect(jsonPath("$.title").value("Biology"))
+                .andExpect(jsonPath("$.slug").value("biology"));
     }
 
     @Test

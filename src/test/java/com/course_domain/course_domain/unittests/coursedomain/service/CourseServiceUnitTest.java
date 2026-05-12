@@ -7,6 +7,11 @@ import com.course_domain.course_domain.exception.DuplicateCourseFieldException;
 import com.course_domain.course_domain.mapper.CourseConverter;
 import com.course_domain.course_domain.mapper.CourseMapper;
 import com.course_domain.course_domain.model.Course;
+import com.course_domain.course_domain.model.enums.ClassLevel;
+import com.course_domain.course_domain.model.enums.CourseCategory;
+import com.course_domain.course_domain.model.enums.CourseStatus;
+import com.course_domain.course_domain.model.enums.CourseType;
+import com.course_domain.course_domain.model.enums.CurriculumLevel;
 import com.course_domain.course_domain.repository.CourseRepository;
 import com.course_domain.course_domain.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -38,7 +43,7 @@ class CourseServiceUnitTest {
         CourseRequestDTO request = validRequest();
         Course course = new Course();
         CourseResponseDTO response = new CourseResponseDTO();
-        response.setSlug("spring-boot-fundamentals");
+        response.setSlug("biology");
 
         when(courseConverter.toEntity(request)).thenReturn(course);
         when(courseRepository.save(any(Course.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -46,8 +51,8 @@ class CourseServiceUnitTest {
 
         CourseResponseDTO result = courseService.createCourse(request);
 
-        assertThat(result.getSlug()).isEqualTo("spring-boot-fundamentals");
-        assertThat(course.getSlug()).isEqualTo("spring-boot-fundamentals");
+        assertThat(result.getSlug()).isEqualTo("biology");
+        assertThat(course.getSlug()).isEqualTo("biology");
         assertThat(course.getCreatedAt()).isNotNull();
         assertThat(course.getUpdatedAt()).isNotNull();
         verify(courseRepository).save(course);
@@ -56,19 +61,19 @@ class CourseServiceUnitTest {
     @Test
     void shouldRejectDuplicateCourseCode() {
         CourseRequestDTO request = validRequest();
-        when(courseRepository.existsByCodeIgnoreCase("SB101")).thenReturn(true);
+        when(courseRepository.existsByCodeIgnoreCase("BIO-S1-T1-2026")).thenReturn(true);
 
         assertThatThrownBy(() -> courseService.createCourse(request))
                 .isInstanceOf(DuplicateCourseFieldException.class)
-                .hasMessage("Course code already exists: SB101");
+                .hasMessage("Course code already exists: BIO-S1-T1-2026");
     }
 
     @Test
     void shouldReturnAllCourses() {
-        Course firstCourse = course("course-1", "SB101");
-        Course secondCourse = course("course-2", "WEB101");
-        CourseResponseDTO firstResponse = response("course-1", "SB101");
-        CourseResponseDTO secondResponse = response("course-2", "WEB101");
+        Course firstCourse = course("course-1", "BIO-S1-T1-2026");
+        Course secondCourse = course("course-2", "PHY-S1-T1-2026");
+        CourseResponseDTO firstResponse = response("course-1", "BIO-S1-T1-2026");
+        CourseResponseDTO secondResponse = response("course-2", "PHY-S1-T1-2026");
 
         when(courseRepository.findAll()).thenReturn(List.of(firstCourse, secondCourse));
         when(courseMapper.toResponseDTO(firstCourse)).thenReturn(firstResponse);
@@ -94,8 +99,8 @@ class CourseServiceUnitTest {
 
     @Test
     void shouldReturnCourseByIdWhenCourseExists() {
-        Course course = course("course-1", "SB101");
-        CourseResponseDTO response = response("course-1", "SB101");
+        Course course = course("course-1", "BIO-S1-T1-2026");
+        CourseResponseDTO response = response("course-1", "BIO-S1-T1-2026");
 
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
         when(courseMapper.toResponseDTO(course)).thenReturn(response);
@@ -121,25 +126,39 @@ class CourseServiceUnitTest {
     @Test
     void shouldUpdateCourseWhenCourseExists() {
         CourseRequestDTO request = validRequest();
-        request.setTitle("Updated Spring Boot Fundamentals");
+        request.setTermId("TERM2");
+        request.setCode("PHY-S1-T2-2026");
+        request.setTitle("Physics");
+        request.setCourseId("PHY");
+        request.setCourseName("Physics");
+        request.setInstructorId("TCH002");
+        request.setInstructorUsername("ms-nambi");
+        request.setStatus(CourseStatus.ACTIVE);
         Course course = course("course-1", "OLD101");
-        CourseResponseDTO response = response("course-1", "SB101");
-        response.setTitle("Updated Spring Boot Fundamentals");
-        response.setSlug("updated-spring-boot-fundamentals");
+        CourseResponseDTO response = response("course-1", "PHY-S1-T2-2026");
+        response.setTitle("Physics");
+        response.setSlug("physics");
 
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
-        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
-        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
-        when(courseRepository.findByTitleIgnoreCase("Updated Spring Boot Fundamentals")).thenReturn(Optional.empty());
+        when(courseRepository.findByCodeIgnoreCase("PHY-S1-T2-2026")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TCH002")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Physics")).thenReturn(Optional.empty());
         when(courseRepository.save(course)).thenReturn(course);
         when(courseMapper.toResponseDTO(course)).thenReturn(response);
 
         CourseResponseDTO result = courseService.updateCourse("course-1", request);
 
         assertThat(result).isEqualTo(response);
-        assertThat(course.getCode()).isEqualTo("SB101");
-        assertThat(course.getTitle()).isEqualTo("Updated Spring Boot Fundamentals");
-        assertThat(course.getSlug()).isEqualTo("updated-spring-boot-fundamentals");
+        assertThat(course.getInstitutionId()).isEqualTo("SCH001");
+        assertThat(course.getAcademicYearId()).isEqualTo("AY2026");
+        assertThat(course.getTermId()).isEqualTo("TERM2");
+        assertThat(course.getCode()).isEqualTo("PHY-S1-T2-2026");
+        assertThat(course.getTitle()).isEqualTo("Physics");
+        assertThat(course.getSlug()).isEqualTo("physics");
+        assertThat(course.getSubjectId()).isEqualTo("PHY");
+        assertThat(course.getSubjectName()).isEqualTo("Physics");
+        assertThat(course.getInstructorUsername()).isEqualTo("ms-nambi");
+        assertThat(course.getStatus()).isEqualTo(CourseStatus.ACTIVE);
         assertThat(course.getId()).isEqualTo("course-1");
         verify(courseRepository).findById("course-1");
         verify(courseRepository).save(course);
@@ -163,14 +182,14 @@ class CourseServiceUnitTest {
     void shouldRejectDuplicateCourseCodeWhenUpdatingCourse() {
         CourseRequestDTO request = validRequest();
         Course course = course("course-1", "OLD101");
-        Course duplicateCourse = course("course-2", "SB101");
+        Course duplicateCourse = course("course-2", "BIO-S1-T1-2026");
 
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
-        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.of(duplicateCourse));
+        when(courseRepository.findByCodeIgnoreCase("BIO-S1-T1-2026")).thenReturn(Optional.of(duplicateCourse));
 
         assertThatThrownBy(() -> courseService.updateCourse("course-1", request))
                 .isInstanceOf(DuplicateCourseFieldException.class)
-                .hasMessage("Course code already exists: SB101");
+                .hasMessage("Course code already exists: BIO-S1-T1-2026");
 
         verify(courseRepository).findById("course-1");
         verify(courseRepository, never()).save(any(Course.class));
@@ -180,16 +199,16 @@ class CourseServiceUnitTest {
     void shouldRejectDuplicateCourseTitleWhenUpdatingCourse() {
         CourseRequestDTO request = validRequest();
         Course course = course("course-1", "OLD101");
-        Course duplicateCourse = course("course-2", "WEB101");
+        Course duplicateCourse = course("course-2", "PHY-S1-T1-2026");
 
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
-        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
-        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
-        when(courseRepository.findByTitleIgnoreCase("Spring Boot Fundamentals")).thenReturn(Optional.of(duplicateCourse));
+        when(courseRepository.findByCodeIgnoreCase("BIO-S1-T1-2026")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TCH001")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Biology")).thenReturn(Optional.of(duplicateCourse));
 
         assertThatThrownBy(() -> courseService.updateCourse("course-1", request))
                 .isInstanceOf(DuplicateCourseFieldException.class)
-                .hasMessage("Course title already exists: Spring Boot Fundamentals");
+                .hasMessage("Course title already exists: Biology");
 
         verify(courseRepository).findById("course-1");
         verify(courseRepository, never()).save(any(Course.class));
@@ -203,11 +222,11 @@ class CourseServiceUnitTest {
         course.setCreatedAt(createdAt);
 
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
-        when(courseRepository.findByCodeIgnoreCase("SB101")).thenReturn(Optional.empty());
-        when(courseRepository.findByInstructorIdIgnoreCase("TM1234")).thenReturn(Optional.empty());
-        when(courseRepository.findByTitleIgnoreCase("Spring Boot Fundamentals")).thenReturn(Optional.empty());
+        when(courseRepository.findByCodeIgnoreCase("BIO-S1-T1-2026")).thenReturn(Optional.empty());
+        when(courseRepository.findByInstructorIdIgnoreCase("TCH001")).thenReturn(Optional.empty());
+        when(courseRepository.findByTitleIgnoreCase("Biology")).thenReturn(Optional.empty());
         when(courseRepository.save(course)).thenReturn(course);
-        when(courseMapper.toResponseDTO(course)).thenReturn(response("course-1", "SB101"));
+        when(courseMapper.toResponseDTO(course)).thenReturn(response("course-1", "BIO-S1-T1-2026"));
 
         courseService.updateCourse("course-1", request);
 
@@ -219,7 +238,7 @@ class CourseServiceUnitTest {
 
     @Test
     void shouldDeleteCourseWhenCourseExists() {
-        Course course = course("course-1", "SB101");
+        Course course = course("course-1", "BIO-S1-T1-2026");
         when(courseRepository.findById("course-1")).thenReturn(Optional.of(course));
 
         courseService.deleteCourse("course-1");
@@ -242,16 +261,16 @@ class CourseServiceUnitTest {
 
     @Test
     void shouldReturnCourseBySlugWhenSlugExists() {
-        Course course = course("course-1", "SB101");
-        CourseResponseDTO response = response("course-1", "SB101");
+        Course course = course("course-1", "BIO-S1-T1-2026");
+        CourseResponseDTO response = response("course-1", "BIO-S1-T1-2026");
 
-        when(courseRepository.findBySlug("spring-boot-fundamentals")).thenReturn(Optional.of(course));
+        when(courseRepository.findBySlug("biology")).thenReturn(Optional.of(course));
         when(courseMapper.toResponseDTO(course)).thenReturn(response);
 
-        CourseResponseDTO result = courseService.getCourseBySlug("spring-boot-fundamentals");
+        CourseResponseDTO result = courseService.getCourseBySlug("biology");
 
         assertThat(result).isEqualTo(response);
-        verify(courseRepository).findBySlug("spring-boot-fundamentals");
+        verify(courseRepository).findBySlug("biology");
         verify(courseMapper).toResponseDTO(course);
     }
 
@@ -268,32 +287,66 @@ class CourseServiceUnitTest {
 
     private CourseRequestDTO validRequest() {
         CourseRequestDTO request = new CourseRequestDTO();
-        request.setCode("SB101");
-        request.setTitle("Spring Boot Fundamentals");
-        request.setDescription("Build a REST API with Spring Boot");
-        request.setInstructorId("TM1234");
+        request.setInstitutionId("SCH001");
+        request.setAcademicYearId("AY2026");
+        request.setTermId("TERM1");
+        request.setCode("BIO-S1-T1-2026");
+        request.setTitle("Biology");
+        request.setDescription("Senior 1 Biology for Term 1.");
+        request.setCurriculumLevel(CurriculumLevel.O_LEVEL);
+        request.setClassLevel(ClassLevel.S1);
+        request.setStreamId("S1-A");
+        request.setCourseId("BIO");
+        request.setCourseName("Biology");
+        request.setCourseCategory(CourseCategory.SCIENCE);
+        request.setCourseType(CourseType.COMPULSORY);
+        request.setInstructorId("TCH001");
+        request.setInstructorUsername("mr-kato");
+        request.setLanguageCode("en");
+        request.setDurationHours(48);
+        request.setStatus(CourseStatus.DRAFT);
         return request;
     }
 
     private Course course(String id, String code) {
         Course course = new Course();
         course.setId(id);
+        course.setInstitutionId("SCH001");
+        course.setAcademicYearId("AY2026");
+        course.setTermId("TERM1");
         course.setCode(code);
-        course.setTitle("Spring Boot Fundamentals");
-        course.setSlug("spring-boot-fundamentals");
-        course.setDescription("Build a REST API with Spring Boot");
-        course.setInstructorId("TM1234");
+        course.setTitle("Biology");
+        course.setSlug("biology");
+        course.setDescription("Senior 1 Biology for Term 1.");
+        course.setCurriculumLevel(CurriculumLevel.O_LEVEL);
+        course.setClassLevel(ClassLevel.S1);
+        course.setSubjectId("BIO");
+        course.setSubjectName("Biology");
+        course.setCourseCategory(CourseCategory.SCIENCE);
+        course.setCourseType(CourseType.COMPULSORY);
+        course.setInstructorId("TCH001");
+        course.setStatus(CourseStatus.DRAFT);
         return course;
     }
 
     private CourseResponseDTO response(String id, String code) {
         CourseResponseDTO response = new CourseResponseDTO();
         response.setId(id);
+        response.setInstitutionId("SCH001");
+        response.setAcademicYearId("AY2026");
+        response.setTermId("TERM1");
         response.setCode(code);
-        response.setTitle("Spring Boot Fundamentals");
-        response.setSlug("spring-boot-fundamentals");
-        response.setDescription("Build a REST API with Spring Boot");
-        response.setInstructorId("TM1234");
+        response.setTitle("Biology");
+        response.setSlug("biology");
+        response.setDescription("Senior 1 Biology for Term 1.");
+        response.setCurriculumLevel(CurriculumLevel.O_LEVEL);
+        response.setClassLevel(ClassLevel.S1);
+        response.setCourseId("BIO");
+        response.setCourseName("Biology");
+        response.setCourseCategory(CourseCategory.SCIENCE);
+        response.setCourseType(CourseType.COMPULSORY);
+        response.setInstructorId("TCH001");
+        response.setStatus(CourseStatus.DRAFT);
         return response;
     }
 }

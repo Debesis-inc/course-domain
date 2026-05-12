@@ -90,10 +90,10 @@ class CourseControllerUnitTest {
     void shouldReturnOkStatusWhenCourseIsFetchedBySlug() {
         CourseResponseDTO response = new CourseResponseDTO();
         response.setId("course-id");
-        response.setSlug("spring-boot-fundamentals");
-        when(courseService.getCourseBySlug("spring-boot-fundamentals")).thenReturn(response);
+        response.setSlug("biology");
+        when(courseService.getCourseBySlug("biology")).thenReturn(response);
 
-        var result = courseController.getCourseBySlug("spring-boot-fundamentals");
+        var result = courseController.getCourseBySlug("biology");
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(response);
@@ -121,9 +121,16 @@ class CourseControllerUnitTest {
                 .build();
         String requestBody = """
                 {
-                  "code": "SB101",
-                  "title": "Spring Boot Fundamentals",
-                  "instructorId": "TM1234"
+                  "institutionId": "SCH001",
+                  "academicYearId": "AY2026",
+                  "termId": "TERM1",
+                  "code": "BIO-S1-T1-2026",
+                  "title": "Biology",
+                  "curriculumLevel": "O_LEVEL",
+                  "classLevel": "S1",
+                  "courseCategory": "SCIENCE",
+                  "courseType": "COMPULSORY",
+                  "instructorId": "TCH001"
                 }
                 """;
         when(courseService.updateCourse(org.mockito.ArgumentMatchers.eq("missing-course"), org.mockito.ArgumentMatchers.any(CourseRequestDTO.class)))
@@ -145,8 +152,15 @@ class CourseControllerUnitTest {
                 .build();
         String requestBody = """
                 {
+                  "institutionId": "",
+                  "academicYearId": "",
+                  "termId": "",
                   "code": "",
                   "title": "",
+                  "curriculumLevel": null,
+                  "classLevel": null,
+                  "courseCategory": null,
+                  "courseType": null,
                   "instructorId": ""
                 }
                 """;

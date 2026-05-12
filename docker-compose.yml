@@ -9,6 +9,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: DigitalOcean2026Debesis
       MONGO_INITDB_DATABASE: course
+    #ports:
+    #  - "127.0.0.1:27017:27017"
     volumes:
       - mongo_data:/data/db
 
@@ -26,4 +28,4 @@ services:
       - mongodb
 
 volumes:
-  mongo_data:                 # named volume — survives container restarts
+  mongo_data:

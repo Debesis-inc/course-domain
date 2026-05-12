@@ -10,6 +10,8 @@ public interface CourseConverter {
 
 
     @Mapping(target = "slug", ignore = true)
+    @Mapping(target = "subjectId", source = "courseId")
+    @Mapping(target = "subjectName", source = "courseName")
 
     Course toEntity(CourseRequestDTO courseRequestDTO);
 }

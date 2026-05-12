@@ -1,7 +1,10 @@
 {
+  "institutionId": "",
+  "academicYearId": "",
+  "termId": "",
   "code": "",
   "title": "",
-  "description": "Build a REST API with Spring Boot",
-  "instructorId": "invalid",
+  "description": "Senior 1 Biology for Term 1.",
+  "instructorId": "",
   "durationHours": -1
 }
